@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="/css/deck.css?v=<%= assetVersion %>">
+<div class="lv" id="live">
+  <div class="lv-head">
+    <div>
+      <h1>En direct</h1>
+      <p class="lv-sub" id="lv-sub">Connexion…</p>
+    </div>
+    <span class="lv-state" id="lv-state" data-state="connecting"><i></i><span>Connexion…</span></span>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn-primary" id="dk-start">Démarrer l'explication</button>
+    <div class="dk-remote" id="dk-remote" role="group" aria-label="Commandes de la présentation" hidden>
+      <button type="button" id="dk-prev" aria-label="Diapositive précédente">‹</button>
+      <button type="button" id="dk-next" aria-label="Diapositive suivante">›</button>
+      <span id="dk-where" aria-live="polite"></span>
+      <button type="button" id="dk-stop">Terminer</button>
+    </div>
+    <button type="button" class="btn" id="lv-share" aria-expanded="<%= linkRenewed %>">Lien de la carte</button>
+    <button type="button" class="btn" id="lv-hide" aria-pressed="false">Masquer les réponses</button>
+    <button type="button" class="btn" id="lv-full">Plein écran</button>
+  </div>
+
+  <div class="lv-link" id="lv-link"<%= linkRenewed ? '' : ' hidden' %>>
+    <div class="lv-link-text">
+      <b><%= linkRenewed ? 'Nouveau lien créé, l\'ancien ne fonctionne plus.' : 'Carte plein écran, sans connexion' %></b>
+    </div>
+    <input class="input" id="lv-link-url" readonly value="<%= screenUrl %>" aria-label="Lien de la carte">
+    <form method="post" action="/admin/live/link" onsubmit="return confirm('Créer un nouveau lien ? L\'ancien cessera de fonctionner immédiatement.')"><button class="btn" type="submit">Révoquer</button></form>
+    <button type="button" class="btn btn-ghost btn-icon" data-copy="#lv-link-url" title="Copier le lien" aria-label="Copier le lien">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+    </button>
+    <a class="btn btn-ghost btn-icon" href="<%= screenUrl %>" target="_blank" rel="noreferrer" title="Ouvrir la carte dans un nouvel onglet" aria-label="Ouvrir la carte dans un nouvel onglet">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+    </a>
+    <button type="button" class="lv-link-close" id="lv-link-close" aria-label="Fermer">×</button>
+  </div>
+
+  <div class="lv-kpis">
+    <div class="lv-kpi"><strong id="k-progress">0</strong><span>en cours</span></div>
+    <div class="lv-kpi"><strong id="k-done">0</strong><span>terminés</span></div>
+    <div class="lv-kpi"><strong id="k-wait">0</strong><span>pas commencé</span></div>
+    <div class="lv-kpi"><strong id="k-groups">0</strong><span>groupes</span></div>
+    <div class="lv-overall">
+      <div class="lv-overall-label"><span>Réponses de l'équipe</span><b id="k-answers">0 / 0</b></div>
+      <div class="lv-bar"><i id="k-bar"></i></div>
+    </div>
+  </div>
+
+  <div class="lv-main">
+    <div class="lv-col">
+      <div class="lv-stage" id="lv-stage">
+        <svg class="lv-hulls" id="lv-hulls" aria-hidden="true"></svg>
+        <% [['D', 'tl'], ['I', 'tr'], ['S', 'br'], ['C', 'bl']].forEach(([d, pos]) => { const dim = DIMENSIONS[d]; %>
+        <div class="lv-zone <%= pos %>" style="--c:<%= dim.color %>">
+          <%- renderBlob({ color: dim.color, face: dim.face }) %>
+          <div><b><%= dim.name %></b><span><%= dim.summary %></span></div>
+        </div>
+        <% }); %>
+        <div class="lv-empty" id="lv-empty">Les avatars apparaîtront ici dès qu'un collaborateur commencera le test.</div>
+      </div>
+      <div class="lv-tray" id="lv-tray-box">
+        <div class="lv-tray-title">Pas encore commencé</div>
+        <div class="lv-tray-list" id="lv-tray"></div>
+      </div>
+    </div>
+    <aside class="lv-side">
+      <section class="lv-card">
+        <h2 id="lv-groups-title">Groupes</h2>
+        <div class="lv-groups" id="lv-groups"></div>
+      </section>
+      <section class="lv-card">
+        <h2>Dernières réponses</h2>
+        <div class="lv-feed" id="lv-feed" aria-live="off"></div>
+      </section>
+    </aside>
+  </div>
+</div>
+<script type="application/json" id="lv-guide"><%- guide %></script>
+<script type="application/json" id="lv-deck"><%- deck %></script>
+<script src="/js/deck-slides.js?v=<%= assetVersion %>"></script>
+<script src="/js/deck.js?v=<%= assetVersion %>"></script>
+<script src="/js/live.js?v=<%= assetVersion %>"></script>

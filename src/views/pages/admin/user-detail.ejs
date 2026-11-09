@@ -1,0 +1,90 @@
+<header class="page-header">
+  <h1><%= user.first_name %> <%= user.last_name %> <% if (user.role === 'admin') { %><span class="badge badge-dark">admin</span><% } %></h1>
+  <div class="header-actions">
+    <% if (attempt) { %>
+    <form method="post" action="/admin/users/<%= user.id %>/reset" data-confirm="Réinitialiser les réponses de <%= user.first_name %> ? Ses réponses et son résultat seront supprimés définitivement, et le test pourra être repassé.">
+      <button class="btn btn-danger-ghost" type="submit">Réinitialiser les réponses</button>
+    </form>
+    <% } %>
+    <a class="btn btn-ghost" href="/admin/users">Retour à la liste</a>
+  </div>
+</header>
+
+<% if (created) { %><div class="flash flash-ok">Compte créé. Envoie-lui le lien d'invitation ci-dessous.</div><% } %>
+
+<div class="grid-2">
+  <section class="panel">
+    <h2>Accès</h2>
+    <% if (inviteUrl) { %>
+      <p class="muted small">Lien d'invitation valable 14 jours. Transmets-le au collaborateur : il choisira son mot de passe.</p>
+      <div class="copy-row"><input class="input" readonly value="<%= inviteUrl %>" id="invite-url"><button class="btn btn-primary" type="button" data-copy="#invite-url">Copier</button></div>
+    <% } else if (user.password_hash) { %>
+      <p><span class="badge badge-ok">Compte actif</span></p>
+      <p class="muted small">Mot de passe oublié ? Génère un nouveau lien : il permettra de définir un nouveau mot de passe.</p>
+    <% } else { %>
+      <p><span class="badge badge-danger">Lien expiré</span> <span class="muted small">Le compte n'a pas été activé à temps.</span></p>
+    <% } %>
+    <form method="post" action="/admin/users/<%= user.id %>/invite" class="actions">
+      <button class="btn btn-ghost" type="submit"><%= inviteUrl ? 'Régénérer le lien' : 'Générer un lien' %></button>
+    </form>
+
+    <h2>Informations</h2>
+    <form method="post" action="/admin/users/<%= user.id %>" class="form">
+      <div class="row-2">
+        <label class="field"><span>Prénom *</span><input class="input" name="first_name" value="<%= values.first_name %>" required></label>
+        <label class="field"><span>Nom</span><input class="input" name="last_name" value="<%= values.last_name %>"></label>
+      </div>
+      <label class="field"><span>Email *</span><input class="input" type="email" name="email" value="<%= values.email %>" required></label>
+      <label class="check"><input type="checkbox" name="show_in_team" value="1" <%= values.show_in_team ? 'checked' : '' %>> Visible sur la page Équipe</label>
+      <div class="actions"><button class="btn btn-primary" type="submit">Enregistrer</button></div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Avatar</h2>
+    <div class="avatar-preview-sm"><%- renderAvatar(parseAvatar(user.avatar_json), { expression, size: 220 }) %></div>
+    <div class="actions"><a class="btn btn-primary" href="/admin/users/<%= user.id %>/avatar">Modifier l'avatar</a></div>
+
+    <h2>Test</h2>
+    <% if (!attempt) { %>
+      <p class="muted">Pas commencé.</p>
+    <% } else if (attempt.status === 'in_progress') { %>
+      <p><span class="badge badge-warn">En cours</span> <span class="muted small">commencé le <%= formatDate(attempt.started_at) %>, <%= answers.filter((a) => a.answered).length %> / <%= answers.length %> blocs répondus</span></p>
+    <% } else { %>
+      <p><span class="badge badge-ok">Terminé</span> <span class="muted small">le <%= formatDate(attempt.completed_at) %></span></p>
+      <p class="profile-line"><i class="dot" style="--c:<%= color %>"></i> <strong><%= profile ? profile.name : attempt.profile_key %></strong> <span class="muted">(<%= attempt.profile_key %>)</span></p>
+      <%- include('../../partials/bars', { scores: scores.norm }) %>
+      <p class="muted small">Bruts : <% ORDER.forEach((d) => { %><%= d %> <%= scores.raw[d] > 0 ? '+' : '' %><%= scores.raw[d] %> &nbsp;<% }); %>· <%= scores.answered %> blocs répondus.</p>
+    <% } %>
+  </section>
+</div>
+
+<% if (attempt && answers.length) { %>
+<section class="panel">
+  <h2>Réponses bloc par bloc</h2>
+  <p class="muted small">Dans l'ordre présenté au collaborateur. <span class="badge badge-ok">+</span> le plus &nbsp; <span class="badge badge-danger">−</span> le moins</p>
+  <div class="answers-grid">
+    <% answers.forEach((a) => { %>
+    <div class="answer-block<%= a.answered ? '' : ' is-empty' %>">
+      <div class="ab-head">Bloc <%= a.index %> <% if (a.skipped) { %><span class="badge">passé</span><% } else if (!a.answered) { %><span class="badge">sans réponse</span><% } %></div>
+      <% a.items.forEach((it) => { %>
+      <div class="ab-item<%= it.most ? ' is-most' : it.least ? ' is-least' : '' %>">
+        <span class="ab-mark"><%= it.most ? '+' : it.least ? '−' : '' %></span>
+        <span class="ab-text"><%= it.text %></span>
+        <span class="dim-chip" style="--c:<%= DIMENSIONS[it.dimension] ? DIMENSIONS[it.dimension].color : '#ccc' %>"><%= it.dimension %></span>
+      </div>
+      <% }); %>
+    </div>
+    <% }); %>
+  </div>
+</section>
+<% } %>
+
+<% if (!isSelf) { %>
+<section class="panel danger-zone">
+  <h2>Zone sensible</h2>
+  <form method="post" action="/admin/users/<%= user.id %>/delete" data-confirm="Supprimer définitivement le compte de <%= user.first_name %> <%= user.last_name %> et ses résultats ?">
+    <button class="btn btn-danger" type="submit">Supprimer ce collaborateur</button>
+  </form>
+</section>
+<% } %>

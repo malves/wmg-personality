@@ -1,0 +1,52 @@
+<%
+const avatarCfg = parseAvatar(currentUser.avatar_json);
+const done = !!result;
+const inProgress = attempt && attempt.status === 'in_progress';
+const blobColors = done ? result.dims.map((d) => DIMENSIONS[d]) : [DIMENSIONS.I, DIMENSIONS.C, DIMENSIONS.D];
+const hour = new Date().getHours();
+const greet = hour < 5 ? 'Bonne nuit' : hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+%>
+<section class="home">
+  <div class="sky"></div>
+  <header class="home-top">
+    <a class="icon-btn" href="/me" aria-label="Mon compte">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    </a>
+    <div class="home-brand">
+      <% if (settings.logo_path) { %><img src="<%= settings.logo_path %>" alt="<%= appName %>"><% } else { %>
+      <svg width="40" height="40" viewBox="0 0 44 44" fill="none" stroke="#1C1D22" stroke-width="2.4" stroke-linecap="round"><path d="M8 32c6-14 10-22 12-22s-2 22 2 22 4-22 8-22 0 22 6 22"/></svg>
+      <% } %>
+    </div>
+    <% if (currentUser.role === 'admin') { %>
+    <a class="icon-btn" href="/admin" aria-label="Administration">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </a>
+    <% } else { %>
+    <a class="icon-btn" href="/team" aria-label="Équipe">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </a>
+    <% } %>
+  </header>
+
+  <div class="home-avatar" style="--halo:<%= done ? result.color : '#CFE6FF' %>">
+    <%- renderAvatar(avatarCfg, { expression: done ? result.expression : 'joy', background: false }) %>
+  </div>
+
+  <h1 class="hello"><%= greet %><span><%= currentUser.first_name %></span></h1>
+  <% if (done) { %>
+    <p class="sub">Ton profil : <strong style="color:<%= result.color %>"><%= result.profile.name %></strong></p>
+    <div class="home-cta"><a class="btn btn-primary btn-block" href="/result">Voir mon résultat</a></div>
+  <% } else if (inProgress) { %>
+    <p class="sub">Test en cours, on reprend là où tu t'es arrêté ?</p>
+    <div class="home-cta"><a class="btn btn-primary btn-block" href="/test">Continuer le test</a></div>
+  <% } else { %>
+    <p class="sub">Prêt à te découvrir ?</p>
+    <div class="home-cta"><a class="btn btn-primary btn-block" href="/test">Commencer le test</a></div>
+  <% } %>
+
+  <div class="home-blobs" aria-hidden="true">
+    <%- renderBlob({ color: blobColors[1].color, face: blobColors[1].face, className: 'hb-left' }) %>
+    <%- renderBlob({ color: blobColors[2].color, face: blobColors[2].face, className: 'hb-right' }) %>
+    <%- renderBlob({ color: blobColors[0].color, face: blobColors[0].face, className: 'hb-center' }) %>
+  </div>
+</section>

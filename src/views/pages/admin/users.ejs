@@ -1,0 +1,33 @@
+<header class="page-header"><h1>Collaborateurs <span class="count"><%= users.length %></span></h1><div class="header-actions">
+    <% if (attempts) { %>
+    <form method="post" action="/admin/users/reset-all" data-confirm="Réinitialiser les réponses de tout le monde ? <%= attempts %> <%= attempts > 1 ? 'passations seront supprimées' : 'passation sera supprimée' %>, avec les résultats et les groupes. Cette action est définitive.">
+      <button class="btn btn-danger-ghost" type="submit">Réinitialiser toutes les réponses</button>
+    </form>
+    <% } %>
+    <a class="btn btn-primary" href="/admin/users/new">+ Nouveau collaborateur</a>
+  </div></header>
+
+<section class="panel">
+  <table class="table">
+    <thead><tr><th></th><th>Nom</th><th>Email</th><th>Statut</th><th>Test</th><th></th></tr></thead>
+    <tbody>
+    <% users.forEach((u) => { %>
+      <tr>
+        <td class="td-av"><%- renderAvatar(parseAvatar(u.avatar_json), { size: 44 }) %></td>
+        <td><strong><%= u.first_name %> <%= u.last_name %></strong><% if (u.role === 'admin') { %> <span class="badge badge-dark">admin</span><% } %><% if (!u.show_in_team) { %> <span class="badge">masqué de l'équipe</span><% } %></td>
+        <td class="muted"><%= u.email %></td>
+        <td><% if (u.active) { %><span class="badge badge-ok">Actif</span><% } else if (u.inviteUrl) { %><span class="badge badge-warn">Invitation en attente</span><% } else { %><span class="badge badge-danger">Lien expiré</span><% } %></td>
+        <td>
+          <% if (u.status === 'completed') { %><i class="dot" style="--c:<%= u.color %>"></i> <%= u.profileName %> <span class="muted small">· <%= formatDate(u.completed_at) %></span>
+          <% } else if (u.status === 'in_progress') { %><span class="badge badge-warn">En cours</span>
+          <% } else { %><span class="muted">Pas commencé</span><% } %>
+        </td>
+        <td class="td-right nowrap">
+          <a class="btn btn-ghost btn-sm" href="/admin/users/<%= u.id %>/avatar">Avatar</a>
+          <a class="btn btn-ghost btn-sm" href="/admin/users/<%= u.id %>">Détail</a>
+        </td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+</section>

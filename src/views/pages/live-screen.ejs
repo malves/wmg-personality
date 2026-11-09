@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title><%= appName %></title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css?v=<%= assetVersion %>">
+  <link rel="stylesheet" href="/css/deck.css?v=<%= assetVersion %>">
+</head>
+<body class="lv-screen">
+  <div class="lv" id="live" data-kiosk="1"<%= presenter ? ' data-presenter=1' : '' %> data-stream="/live/<%= token %>/stream">
+    <div class="lv-stage" id="lv-stage">
+      <svg class="lv-hulls" id="lv-hulls" aria-hidden="true"></svg>
+      <% [['D', 'tl'], ['I', 'tr'], ['S', 'br'], ['C', 'bl']].forEach(([d, pos]) => { const dim = DIMENSIONS[d]; %>
+      <div class="lv-zone <%= pos %>" style="--c:<%= dim.color %>">
+        <%- renderBlob({ color: dim.color, face: dim.face }) %>
+        <div><b><%= dim.name %></b><span><%= dim.summary %></span></div>
+      </div>
+      <% }); %>
+      <div class="lv-hud">
+        <span class="lv-state" id="lv-state" data-state="connecting"><i></i><span>Connexion…</span></span>
+        <b id="lv-hud-text"></b>
+        <div class="lv-bar"><i id="k-bar"></i></div>
+      </div>
+      <button type="button" class="lv-fs" id="lv-full">Plein écran</button>
+      <div class="lv-gone" id="lv-gone" hidden><b>Ce lien n'est plus valide.</b><span>Demandez le nouveau lien à l'administrateur.</span></div>
+    </div>
+  </div>
+  <script type="application/json" id="lv-guide"><%- guide %></script>
+  <script type="application/json" id="lv-deck"><%- deck %></script>
+  <script src="/js/avatar.js?v=<%= assetVersion %>"></script>
+  <script src="/js/deck-slides.js?v=<%= assetVersion %>"></script>
+  <script src="/js/deck.js?v=<%= assetVersion %>"></script>
+  <script src="/js/live.js?v=<%= assetVersion %>"></script>
+</body>
+</html>

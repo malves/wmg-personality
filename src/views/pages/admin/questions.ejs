@@ -1,0 +1,36 @@
+<header class="page-header">
+  <h1>Questions <span class="count"><%= activeCount %> bloc<%= activeCount > 1 ? 's' : '' %> actif<%= activeCount > 1 ? 's' : '' %></span></h1>
+  <form method="post" action="/admin/questions"><button class="btn btn-primary" type="submit">+ Ajouter un bloc</button></form>
+</header>
+<p class="muted">Chaque bloc présente 4 items, un par dimension (D, I, S, C). Le collaborateur choisit celui qui lui ressemble <strong>le plus</strong> et celui qui lui ressemble <strong>le moins</strong>. Glisse les blocs pour les réordonner ; les passations en cours gardent leur ordre.</p>
+
+<div class="blocks" id="blocks" data-reorder-url="/admin/questions/reorder">
+  <% blocks.forEach((b) => { %>
+  <form method="post" action="/admin/questions/<%= b.id %>" class="block-card<%= b.active ? '' : ' is-inactive' %>" id="block-<%= b.id %>" data-id="<%= b.id %>" draggable="true">
+    <div class="block-head">
+      <span class="drag-handle" title="Glisser pour réordonner">⋮⋮</span>
+      <span class="block-num">Bloc <span class="num"><%= b.index %></span></span>
+      <% if (b.warnings.length) { %><span class="badge badge-warn" title="<%= b.warnings.join(' · ') %>">⚠ <%= b.warnings.join(' · ') %></span><% } %>
+      <span class="spacer"></span>
+      <label class="check small"><input type="checkbox" name="active" value="1" <%= b.active ? 'checked' : '' %>> Actif</label>
+      <button class="btn btn-ghost btn-sm" type="submit" formaction="/admin/questions/<%= b.id %>/move" name="dir" value="up" title="Monter" formnovalidate>↑</button>
+      <button class="btn btn-ghost btn-sm" type="submit" formaction="/admin/questions/<%= b.id %>/move" name="dir" value="down" title="Descendre" formnovalidate>↓</button>
+    </div>
+    <div class="block-items">
+      <% b.items.forEach((it) => { %>
+      <div class="item-row">
+        <input class="input" name="items[<%= it.id %>][text]" value="<%= it.text %>" placeholder="Texte de l'item" maxlength="200">
+        <select class="input select-dim" name="items[<%= it.id %>][dimension]" style="--c:<%= DIMENSIONS[it.dimension].color %>">
+          <% ORDER.forEach((d) => { %><option value="<%= d %>" <%= it.dimension === d ? 'selected' : '' %>><%= d %> · <%= DIMENSIONS[d].name %></option><% }); %>
+        </select>
+      </div>
+      <% }); %>
+    </div>
+    <div class="block-foot">
+      <button class="btn btn-danger-ghost btn-sm" type="submit" formaction="/admin/questions/<%= b.id %>/delete" formnovalidate data-confirm="Supprimer le bloc <%= b.index %> ?">Supprimer</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary btn-sm" type="submit">Enregistrer le bloc</button>
+    </div>
+  </form>
+  <% }); %>
+</div>

@@ -1,0 +1,10 @@
+<section class="result">
+  <div class="result-top">
+    <a class="icon-btn" href="/team" aria-label="Retour"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="result-head"><div class="eyebrow">Équipe</div><h1><%= person.first_name %></h1></div>
+    <span class="icon-btn icon-btn--ghost"></span>
+  </div>
+  <div class="hero" style="--halo:#CFE6FF"><%- renderAvatar(parseAvatar(person.avatar_json), { expression: 'thinking', background: false }) %></div>
+  <p class="lead center"><%= person.first_name %> n'a pas encore passé le test. Reviens plus tard&nbsp;!</p>
+  <a class="btn btn-secondary btn-block" href="/team">Retour à l'équipe</a>
+</section>

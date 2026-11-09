@@ -1,0 +1,19 @@
+<section class="auth">
+  <div class="auth-sky"></div>
+  <div class="brand"><div class="brand-name"><%= appName %></div></div>
+  <% if (invalid) { %>
+    <h1 class="h2">Lien expiré</h1>
+    <p class="lead">Ce lien d'invitation n'est plus valable. Demande un nouveau lien à l'administrateur.</p>
+    <a class="btn btn-secondary btn-block" href="/login">Aller à la connexion</a>
+  <% } else { %>
+    <div class="invite-avatar"><%- renderAvatar(parseAvatar(invitee.avatar_json), { expression: 'joy', background: false }) %></div>
+    <h1 class="h2">Bienvenue, <%= invitee.first_name %>&nbsp;!</h1>
+    <p class="lead">Choisis un mot de passe pour activer ton compte.</p>
+    <% if (error) { %><div class="alert"><%= error %></div><% } %>
+    <form method="post" class="form">
+      <label class="field"><span>Mot de passe</span><input class="input" type="password" name="password" required autocomplete="new-password" autofocus></label>
+      <label class="field"><span>Confirme le mot de passe</span><input class="input" type="password" name="password2" required autocomplete="new-password"></label>
+      <button class="btn btn-primary btn-block" type="submit">Activer mon compte</button>
+    </form>
+  <% } %>
+</section>

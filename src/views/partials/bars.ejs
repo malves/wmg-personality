@@ -1,0 +1,20 @@
+<%
+/* Barres horizontales des 4 dimensions.
+   Attend : scores (norm {D,I,S,C}) ; optionnel : compare (norm), labelA, labelB. */
+const compare = locals.compare || null;
+%>
+<div class="bars<%= compare ? ' bars--compare' : '' %>">
+  <% if (compare) { %>
+  <div class="bars-legend"><span><i class="sw sw-a"></i> <%= locals.labelA || 'Toi' %></span><span><i class="sw sw-b"></i> <%= locals.labelB || 'Collègue' %></span></div>
+  <% } %>
+  <% ORDER.forEach((d) => { const dim = DIMENSIONS[d]; %>
+  <div class="bar-row">
+    <div class="bar-label"><span class="dim-dot" style="--c:<%= dim.color %>"><%= d %></span><span><%= dim.name %></span></div>
+    <div class="bar-tracks">
+      <div class="bar-track"><div class="bar-fill" style="width:<%= scores[d] %>%;background:<%= dim.chart %>"></div></div>
+      <% if (compare) { %><div class="bar-track"><div class="bar-fill bar-fill--b" style="width:<%= compare[d] %>%;background-color:<%= dim.chart %>"></div></div><% } %>
+    </div>
+    <div class="bar-value"><%= scores[d] %><% if (compare) { %><br><span class="bar-value-b"><%= compare[d] %></span><% } %></div>
+  </div>
+  <% }); %>
+</div>

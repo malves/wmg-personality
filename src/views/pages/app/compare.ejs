@@ -1,0 +1,52 @@
+<section class="compare">
+  <div class="result-top">
+    <a class="icon-btn" href="/team/<%= them.user.id %>" aria-label="Retour"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="result-head"><div class="eyebrow">Comparaison</div><h1>Toi &amp; <%= them.user.first_name %></h1></div>
+    <span class="icon-btn icon-btn--ghost"></span>
+  </div>
+
+  <div class="compare-heads">
+    <div class="ch" style="--halo:<%= me.color %>">
+      <%- renderAvatar(parseAvatar(me.user.avatar_json), { expression: me.expression, background: false }) %>
+      <div class="ch-name">Toi</div>
+      <div class="ch-prof" style="color:<%= me.color %>"><%= me.profile.name %></div>
+    </div>
+    <div class="ch-vs">&amp;</div>
+    <div class="ch" style="--halo:<%= them.color %>">
+      <%- renderAvatar(parseAvatar(them.user.avatar_json), { expression: them.expression, background: false }) %>
+      <div class="ch-name"><%= them.user.first_name %></div>
+      <div class="ch-prof" style="color:<%= them.color %>"><%= them.profile.name %></div>
+    </div>
+  </div>
+
+  <div class="card card-flat">
+    <div class="card-title">Vos 4 dimensions</div>
+    <%- renderRadar({ series: [{ label: 'Toi', scores: me.scores.norm, stroke: '#4A55C9' }, { label: them.user.first_name, scores: them.scores.norm, stroke: '#C2408F', dash: '6 4' }] }) %>
+    <%- include('../../partials/bars', { scores: me.scores.norm, compare: them.scores.norm, labelA: 'Toi', labelB: them.user.first_name }) %>
+  </div>
+
+  <% if (advice) { %>
+  <div class="card card-accent">
+    <div class="card-title"><%= DIMENSIONS[me.primary].adjective %> &amp; <%= DIMENSIONS[them.primary].adjective %> : comment collaborer</div>
+    <% lines(advice).forEach((l) => { %><p><%= l %></p><% }); %>
+  </div>
+  <% } %>
+
+  <% if (them.profile.how_to_work) { %>
+  <details class="card" open>
+    <summary>Comment travailler avec <%= them.user.first_name %></summary>
+    <ul><% lines(them.profile.how_to_work).forEach((l) => { %><li><%= l %></li><% }); %></ul>
+  </details>
+  <% } %>
+  <% if (them.profile.communication) { %>
+  <details class="card">
+    <summary>Son style de communication</summary>
+    <% lines(them.profile.communication).forEach((l) => { %><p><%= l %></p><% }); %>
+  </details>
+  <% } %>
+
+  <div class="btn-row">
+    <a class="btn btn-secondary" href="/team">Équipe</a>
+    <a class="btn btn-primary" href="/team/<%= them.user.id %>">Son profil</a>
+  </div>
+</section>

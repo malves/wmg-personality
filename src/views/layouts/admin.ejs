@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · Admin · <%= appName %></title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css?v=<%= assetVersion %>">
+  <%- style %>
+</head>
+<body class="admin-body">
+  <aside class="sidebar">
+    <a class="sb-brand" href="/admin">
+      <% if (settings.logo_path) { %><img src="<%= settings.logo_path %>" alt=""><% } else { %><span class="sb-mark"></span><% } %>
+      <span><%= appName %></span>
+    </a>
+    <nav class="sb-nav">
+      <a href="/admin" class="<%= locals.active === 'dashboard' ? 'active' : '' %>">Tableau de bord</a>
+      <a href="/admin/live" class="<%= locals.active === 'live' ? 'active' : '' %>">En direct</a>
+      <a href="/admin/users" class="<%= locals.active === 'users' ? 'active' : '' %>">Collaborateurs</a>
+      <a href="/admin/questions" class="<%= locals.active === 'questions' ? 'active' : '' %>">Questions</a>
+      <a href="/admin/profiles" class="<%= locals.active === 'profiles' ? 'active' : '' %>">Profils</a>
+      <a href="/admin/settings" class="<%= locals.active === 'settings' ? 'active' : '' %>">Réglages</a>
+    </nav>
+    <div class="sb-foot">
+      <a href="/" class="sb-link">Voir le site</a>
+      <form method="post" action="/logout"><button class="sb-link" type="submit">Déconnexion</button></form>
+    </div>
+  </aside>
+  <main class="content">
+    <% if (locals.flash) { %><div class="flash"><%= flash %></div><% } %>
+    <%- body %>
+  </main>
+  <script src="/js/avatar.js?v=<%= assetVersion %>"></script>
+  <script src="/js/admin.js?v=<%= assetVersion %>"></script>
+  <%- script %>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<section class="me">
+  <div class="result-top">
+    <a class="icon-btn" href="/" aria-label="Retour"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="result-head"><div class="eyebrow">Mon compte</div><h1><%= currentUser.first_name %></h1></div>
+    <span class="icon-btn icon-btn--ghost"></span>
+  </div>
+  <div class="me-avatar"><%- renderAvatar(parseAvatar(currentUser.avatar_json), { expression: 'wink' }) %></div>
+  <p class="lead center"><%= currentUser.first_name %> <%= currentUser.last_name %><br><span class="muted"><%= currentUser.email %></span></p>
+  <p class="hint center">Ton avatar est composé par l'administrateur. Une envie de changement ? Demande-lui&nbsp;!</p>
+
+  <div class="card card-flat">
+    <div class="card-title">Changer mon mot de passe</div>
+    <% if (error) { %><div class="alert"><%= error %></div><% } %>
+    <% if (success) { %><div class="alert alert-ok">Mot de passe modifié.</div><% } %>
+    <form method="post" action="/me/password" class="form">
+      <label class="field"><span>Mot de passe actuel</span><input class="input" type="password" name="current" required autocomplete="current-password"></label>
+      <label class="field"><span>Nouveau mot de passe</span><input class="input" type="password" name="password" required autocomplete="new-password"></label>
+      <label class="field"><span>Confirmation</span><input class="input" type="password" name="password2" required autocomplete="new-password"></label>
+      <button class="btn btn-secondary btn-block" type="submit">Enregistrer</button>
+    </form>
+  </div>
+
+  <% if (currentUser.role === 'admin') { %><a class="btn btn-secondary btn-block" href="/admin">Administration</a><% } %>
+  <form method="post" action="/logout" class="logout"><button class="link-btn" type="submit">Se déconnecter</button></form>
+</section>

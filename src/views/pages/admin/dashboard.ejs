@@ -1,0 +1,61 @@
+<header class="page-header"><h1>Tableau de bord</h1><a class="btn btn-primary" href="/admin/users/new">+ Nouveau collaborateur</a></header>
+
+<div class="tiles">
+  <div class="tile"><div class="tile-v"><%= stats.total %></div><div class="tile-l">Comptes</div></div>
+  <div class="tile tile-ok"><div class="tile-v"><%= stats.completed %></div><div class="tile-l">Tests terminés</div></div>
+  <div class="tile tile-warn"><div class="tile-v"><%= stats.inProgress %></div><div class="tile-l">En cours</div></div>
+  <div class="tile"><div class="tile-v"><%= stats.notStarted + stats.pending %></div><div class="tile-l">Pas commencé<% if (stats.pending) { %> <span class="muted">(dont <%= stats.pending %> non activé<%= stats.pending > 1 ? 's' : '' %>)</span><% } %></div></div>
+</div>
+
+<div class="grid-2">
+  <section class="panel">
+    <h2>Répartition des profils</h2>
+    <% if (!distributionRows.length) { %><p class="muted">Aucun test terminé pour l'instant.</p><% } else { %>
+    <div class="dist">
+      <% distributionRows.forEach((r) => { %>
+      <div class="dist-row">
+        <div class="dist-label"><i class="dot" style="--c:<%= r.color %>"></i><%= r.name %></div>
+        <div class="dist-track"><div class="dist-fill" style="width:<%= Math.round(100 * r.n / maxDist) %>%;background:<%= r.chart %>"></div></div>
+        <div class="dist-n"><%= r.n %></div>
+      </div>
+      <% }); %>
+    </div>
+    <% } %>
+  </section>
+
+  <section class="panel">
+    <h2>Moyenne de l'équipe par dimension</h2>
+    <% if (!stats.completed) { %><p class="muted">Aucun test terminé pour l'instant.</p><% } else { %>
+    <div class="dist">
+      <% dimAverages.forEach((d) => { %>
+      <div class="dist-row">
+        <div class="dist-label"><i class="dot" style="--c:<%= d.color %>"></i><%= d.name %></div>
+        <div class="dist-track"><div class="dist-fill" style="width:<%= d.avg %>%;background:<%= d.chart %>"></div></div>
+        <div class="dist-n"><%= d.avg %></div>
+      </div>
+      <% }); %>
+    </div>
+    <p class="muted small">Score normalisé de 0 à 100, 50 = neutre.</p>
+    <% } %>
+  </section>
+</div>
+
+<section class="panel">
+  <h2>Derniers tests terminés</h2>
+  <% if (!recent.length) { %><p class="muted">Rien pour l'instant.</p><% } else { %>
+  <table class="table">
+    <thead><tr><th></th><th>Collaborateur</th><th>Profil</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+    <% recent.forEach((u) => { %>
+      <tr>
+        <td class="td-av"><%- renderAvatar(parseAvatar(u.avatar_json), { size: 40, expression: profileExpression(u.profile_key) }) %></td>
+        <td><strong><%= u.first_name %> <%= u.last_name %></strong></td>
+        <td><i class="dot" style="--c:<%= u.color %>"></i> <%= u.profileName %></td>
+        <td><%= formatDate(u.completed_at) %></td>
+        <td class="td-right"><a class="btn btn-ghost btn-sm" href="/admin/users/<%= u.id %>">Détail</a></td>
+      </tr>
+    <% }); %>
+    </tbody>
+  </table>
+  <% } %>
+</section>

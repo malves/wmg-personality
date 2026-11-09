@@ -1,0 +1,39 @@
+<header class="page-header"><h1>Profils</h1></header>
+<p class="muted">Textes affichés sur la page de résultat. Un retour à la ligne par puce pour les forces, points de vigilance et conseils. Mots-clés séparés par des virgules.</p>
+
+<div class="profiles">
+  <% profiles.forEach((p) => { %>
+  <details class="panel profile-card" id="profile-<%= p.key %>" <%= open === p.key ? 'open' : '' %>>
+    <summary><i class="dot" style="--c:<%= p.color %>"></i><strong><%= p.name %></strong><span class="muted">&nbsp;· <%= p.key %> · <%= p.label %></span></summary>
+    <form method="post" action="/admin/profiles/<%= p.key %>" class="form">
+      <div class="row-2">
+        <label class="field"><span>Nom du profil</span><input class="input" name="name" value="<%= p.name %>" required></label>
+        <label class="field"><span>Accroche</span><input class="input" name="tagline" value="<%= p.tagline || '' %>"></label>
+      </div>
+      <label class="field"><span>Mots-clés (séparés par des virgules)</span><input class="input" name="keywords" value="<%= p.keywords || '' %>"></label>
+      <label class="field"><span>Description</span><textarea class="input" name="description" rows="3"><%= p.description || '' %></textarea></label>
+      <div class="row-2">
+        <label class="field"><span>Forces (une par ligne)</span><textarea class="input" name="strengths" rows="4"><%= p.strengths || '' %></textarea></label>
+        <label class="field"><span>Points de vigilance (un par ligne)</span><textarea class="input" name="watchouts" rows="4"><%= p.watchouts || '' %></textarea></label>
+      </div>
+      <label class="field"><span>Style de communication</span><textarea class="input" name="communication" rows="2"><%= p.communication || '' %></textarea></label>
+      <label class="field"><span>Comment travailler avec moi (un conseil par ligne)</span><textarea class="input" name="how_to_work" rows="4"><%= p.how_to_work || '' %></textarea></label>
+      <div class="actions"><button class="btn btn-primary" type="submit">Enregistrer</button></div>
+    </form>
+  </details>
+  <% }); %>
+</div>
+
+<h2 class="section-title" id="pairs">Conseils de collaboration (page Comparaison)</h2>
+<p class="muted">Selon la dimension principale de chacun des deux collaborateurs.</p>
+<div class="profiles">
+  <% pairRows.forEach((pr) => { %>
+  <details class="panel profile-card" <%= open === 'pairs' ? 'open' : '' %>>
+    <summary><i class="dot" style="--c:<%= pr.a.color %>"></i><i class="dot" style="--c:<%= pr.b.color %>"></i><strong><%= pr.a.adjective %> &amp; <%= pr.b.adjective %></strong><span class="muted">&nbsp;· <%= pr.key %></span></summary>
+    <form method="post" action="/admin/profiles/pairs/<%= pr.key %>" class="form">
+      <label class="field"><span>Conseil</span><textarea class="input" name="text" rows="3"><%= pr.text %></textarea></label>
+      <div class="actions"><button class="btn btn-primary" type="submit">Enregistrer</button></div>
+    </form>
+  </details>
+  <% }); %>
+</div>

@@ -1,0 +1,14 @@
+<header class="page-header"><h1>Nouveau collaborateur</h1><a class="btn btn-ghost" href="/admin/users">Retour</a></header>
+<section class="panel narrow">
+  <% if (errors.length) { %><div class="alert"><% errors.forEach((e) => { %><div><%= e %></div><% }); %></div><% } %>
+  <form method="post" action="/admin/users" class="form">
+    <div class="row-2">
+      <label class="field"><span>Prénom *</span><input class="input" name="first_name" value="<%= values.first_name %>" required autofocus></label>
+      <label class="field"><span>Nom</span><input class="input" name="last_name" value="<%= values.last_name %>"></label>
+    </div>
+    <label class="field"><span>Email *</span><input class="input" type="email" name="email" value="<%= values.email %>" required></label>
+    <label class="check"><input type="checkbox" name="show_in_team" value="1" <%= values.show_in_team ? 'checked' : '' %>> Visible sur la page Équipe</label>
+    <p class="muted small">Un avatar aléatoire est créé, modifiable ensuite. Le lien d'invitation s'affichera sur la fiche du collaborateur.</p>
+    <div class="actions"><button class="btn btn-primary" type="submit">Créer le compte</button></div>
+  </form>
+</section>

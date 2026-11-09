@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    container_name: disc-personality
+    ports:
+      - "3020:3020"
+    environment:
+      NODE_ENV: production
+      PORT: 3020
+      DATA_DIR: /app/data
+      # Obligatoires : à définir dans un fichier .env à côté de ce compose
+      SESSION_SECRET: ${SESSION_SECRET:?Definissez SESSION_SECRET dans .env}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?Definissez ADMIN_EMAIL dans .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Definissez ADMIN_PASSWORD dans .env}
+      BASE_URL: ${BASE_URL:-}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+      TZ: ${TZ:-Europe/Paris}
+    volumes:
+      - disc-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  disc-data:

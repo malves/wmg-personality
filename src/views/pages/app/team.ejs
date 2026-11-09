@@ -1,0 +1,20 @@
+<section class="team">
+  <div class="page-head">
+    <div class="eyebrow">Équipe</div>
+    <h1>Les profils</h1>
+    <p class="lead"><%= doneCount %> sur <%= members.length %> ont passé le test.</p>
+  </div>
+  <div class="team-grid">
+    <% members.forEach((m) => { const self = m.id === currentUser.id; %>
+    <a class="member<%= m.done ? '' : ' is-pending' %>" href="<%= self ? '/result' : '/team/' + m.id %>">
+      <div class="av"><%- renderAvatar(parseAvatar(m.avatar_json), { expression: m.expression }) %></div>
+      <div class="name"><%= m.first_name %><% if (self) { %> <span class="you">toi</span><% } %></div>
+      <% if (m.done) { %>
+        <div class="prof"><i style="--c:<%= m.color %>"></i><%= m.profile.name %></div>
+      <% } else { %>
+        <div class="prof">Pas encore passé</div>
+      <% } %>
+    </a>
+    <% }); %>
+  </div>
+</section>

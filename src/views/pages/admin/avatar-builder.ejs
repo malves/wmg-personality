@@ -1,0 +1,30 @@
+<header class="page-header">
+  <h1>Avatar de <%= user.first_name %> <%= user.last_name %></h1>
+  <a class="btn btn-ghost" href="/admin/users/<%= user.id %>">Retour à la fiche</a>
+</header>
+
+<div class="builder" id="builder" data-config='<%- json(config) %>' data-save-url="/admin/users/<%= user.id %>/avatar">
+  <div class="builder-main">
+    <nav class="bd-tabs" id="tabs" role="tablist" aria-label="Parties de l'avatar"></nav>
+    <div class="builder-controls" id="controls"></div>
+  </div>
+  <aside class="builder-preview">
+    <div class="preview-box" id="preview"></div>
+    <label class="field"><span>Expression (aperçu)</span>
+      <select class="input" id="expression">
+        <% Object.entries(expressions).forEach(([k, l]) => { %><option value="<%= k %>"><%= l %></option><% }); %>
+      </select>
+    </label>
+    <div class="actions actions-col">
+      <button class="btn btn-primary" type="button" id="save">Enregistrer l'avatar</button>
+      <div class="bd-row">
+        <button class="btn btn-ghost" type="button" id="undo" title="Ctrl+Z">Annuler</button>
+        <button class="btn btn-ghost" type="button" id="shuffle">Mélanger</button>
+      </div>
+      <button class="btn btn-ghost" type="button" id="random">Tout au hasard</button>
+      <button class="btn btn-ghost" type="button" id="reset">Personnage de la maquette</button>
+    </div>
+    <div class="save-status" id="status" aria-live="polite"></div>
+  </aside>
+</div>
+<script src="/js/builder.js?v=<%= assetVersion %>"></script>

@@ -1,0 +1,23 @@
+<section class="auth">
+  <div class="auth-sky"></div>
+  <div class="brand">
+    <% if (settings.logo_path) { %><img class="brand-logo" src="<%= settings.logo_path %>" alt=""><% } else { %>
+    <svg class="brand-mark" width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="#1C1D22" stroke-width="2.4" stroke-linecap="round"><path d="M8 32c6-14 10-22 12-22s-2 22 2 22 4-22 8-22 0 22 6 22"/></svg>
+    <% } %>
+    <div class="brand-name"><%= appName %></div>
+  </div>
+  <h1 class="h2">Bonjour&nbsp;!</h1>
+  <p class="lead">Connecte-toi pour découvrir ton profil.</p>
+  <% if (error) { %><div class="alert"><%= error %></div><% } %>
+  <form method="post" action="/login" class="form">
+    <label class="field"><span>Email</span><input class="input" type="email" name="email" value="<%= email %>" required autocomplete="email" autofocus></label>
+    <label class="field"><span>Mot de passe</span><input class="input" type="password" name="password" required autocomplete="current-password"></label>
+    <button class="btn btn-primary btn-block" type="submit">Se connecter</button>
+  </form>
+  <p class="hint">Pas encore de compte ? Demande un lien d'invitation à l'administrateur.</p>
+  <div class="auth-blobs" aria-hidden="true">
+    <%- renderBlob({ color: '#6EC1F5', face: 'sparkle', className: 'ab-1' }) %>
+    <%- renderBlob({ color: '#F6C644', face: 'happy', className: 'ab-2' }) %>
+    <%- renderBlob({ color: '#F28CB8', face: 'calm', className: 'ab-3' }) %>
+  </div>
+</section>

@@ -1,0 +1,109 @@
+<%
+const cfg = parseAvatar(user.avatar_json);
+const kw = keywords(profile.keywords);
+const exportData = {
+  firstName: user.first_name, profileName: profile.name, tagline: profile.tagline, color, expression,
+  avatar: cfg, scores: scores.norm, dims, keywords: kw, appName,
+  dimensions: ORDER.reduce((o, d) => { o[d] = { name: DIMENSIONS[d].name, color: DIMENSIONS[d].color, chart: DIMENSIONS[d].chart, face: DIMENSIONS[d].face }; return o; }, {}),
+};
+const lead = DIMENSIONS[dims[0]];
+const second = DIMENSIONS[dims[1]];
+const balanced = attempt.profile_key === 'EQ';
+const t = isSelf
+  ? { eyebrow: 'Ton résultat DISC', sign: 'Ta signature DISC', who: 'Qui tu es', good: 'Tes forces', warn: 'Tes points de vigilance', talk: 'Ta façon de communiquer', work: 'Comment travailler avec moi' }
+  : { eyebrow: `Le résultat de ${user.first_name}`, sign: 'Sa signature DISC', who: `Qui est ${user.first_name}`, good: 'Ses forces', warn: 'Ses points de vigilance', talk: 'Sa façon de communiquer', work: `Comment travailler avec ${user.first_name}` };
+const doneOn = formatDate(attempt.completed_at);
+%>
+<section class="rs" style="--c1:<%= lead.color %>;--c2:<%= second.color %>;--ink:<%= lead.chart %>">
+  <header class="rs-hero">
+    <a class="icon-btn rs-back" href="<%= isSelf ? '/' : '/team' %>" aria-label="Retour">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+    <div class="rs-title">
+      <div class="rs-eyebrow"><%= t.eyebrow %></div>
+      <h1><%= profile.name %></h1>
+      <% if (profile.tagline) { %><p class="rs-tagline"><%= profile.tagline %></p><% } %>
+    </div>
+    <div class="rs-avatar"><%- renderAvatar(cfg, { expression, background: false }) %></div>
+  </header>
+
+  <div class="rs-sheet">
+    <div class="rs-scores">
+      <% dims.forEach((d, i) => { const dim = DIMENSIONS[d]; %>
+      <div class="rs-score<%= i === 0 ? ' is-top' : '' %>" style="--i:<%= i %>;--c:<%= dim.color %>">
+        <%- renderBlob({ color: dim.color, face: dim.face }) %>
+        <strong data-count="<%= scores.norm[d] %>"><%= scores.norm[d] %></strong>
+        <span><%= dim.name %></span>
+      </div>
+      <% }); %>
+    </div>
+
+    <% if (kw.length) { %>
+    <ul class="rs-chips">
+      <% kw.forEach((k, i) => { %><li style="--i:<%= i %>;--c:<%= DIMENSIONS[dims[i % dims.length]].color %>"><%= k %></li><% }); %>
+    </ul>
+    <% } %>
+
+    <div class="rs-block rv" id="rs-wheel">
+      <h2><%= t.sign %></h2>
+      <%- renderDiscWheel({ scores: scores.norm }) %>
+      <% if (balanced) { %>
+      <p class="rs-note"><b>Profil équilibré.</b> Aucune dimension ne domine vraiment, ce qui permet de s'adapter à beaucoup de situations.</p>
+      <% } else { %>
+      <p class="rs-note"><b><%= lead.name %>.</b> <%= lead.summary %></p>
+      <% } %>
+      <p class="rs-hint">Le cercle pointillé marque 50, la valeur neutre.</p>
+    </div>
+
+    <% if (profile.description) { %>
+    <div class="rs-block rv">
+      <h2><%= t.who %></h2>
+      <% lines(profile.description).forEach((l) => { %><p class="rs-story"><%= l %></p><% }); %>
+    </div>
+    <% } %>
+
+    <% if (profile.strengths) { %>
+    <div class="rs-panel is-good rv">
+      <h2><%= t.good %></h2>
+      <ul><% lines(profile.strengths).forEach((l) => { %><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.4 3.4L15 7"/></svg><span><%= l %></span></li><% }); %></ul>
+    </div>
+    <% } %>
+
+    <% if (profile.watchouts) { %>
+    <div class="rs-panel is-warn rv">
+      <h2><%= t.warn %></h2>
+      <ul><% lines(profile.watchouts).forEach((l) => { %><li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5v6"/><path d="M10 14.6v.1"/></svg><span><%= l %></span></li><% }); %></ul>
+    </div>
+    <% } %>
+
+    <% if (profile.communication) { %>
+    <blockquote class="rs-quote rv">
+      <h2><%= t.talk %></h2>
+      <% lines(profile.communication).forEach((l) => { %><p><%= l %></p><% }); %>
+    </blockquote>
+    <% } %>
+
+    <% if (profile.how_to_work) { %>
+    <div class="rs-work rv">
+      <h2><%= t.work %></h2>
+      <ol><% lines(profile.how_to_work).forEach((l) => { %><li><%= l %></li><% }); %></ol>
+    </div>
+    <% } %>
+
+    <div class="rs-actions rv">
+      <% if (isSelf) { %>
+        <button class="btn btn-secondary" id="download" type="button">Télécharger</button>
+        <a class="btn btn-primary" href="/team">Voir l'équipe</a>
+      <% } else { %>
+        <a class="btn btn-secondary" href="/team">Retour</a>
+        <a class="btn btn-primary" href="/team/compare/<%= user.id %>">Comparer</a>
+      <% } %>
+    </div>
+    <% if (doneOn) { %><p class="rs-date">Test passé le <%= doneOn %></p><% } %>
+  </div>
+</section>
+<script src="/js/result.js?v=<%= assetVersion %>"></script>
+<% if (isSelf) { %>
+<script type="application/json" id="result-data"><%- json(exportData) %></script>
+<script src="/js/result-export.js?v=<%= assetVersion %>"></script>
+<% } %>

@@ -1,0 +1,43 @@
+<header class="page-header"><h1>Réglages</h1></header>
+<form method="post" action="/admin/settings" enctype="multipart/form-data" class="form">
+<div class="grid-2">
+  <section class="panel">
+    <h2>Application</h2>
+    <label class="field"><span>Nom de l'application</span><input class="input" name="app_name" value="<%= s.app_name %>" maxlength="60" required></label>
+    <label class="field"><span>URL publique (pour les liens d'invitation)</span><input class="input" name="base_url" value="<%= s.base_url %>" placeholder="https://disc.ma-societe.fr"></label>
+    <div class="field"><span>Logo (PNG, JPG, WebP ou SVG, 2 Mo max)</span>
+      <% if (s.logo_path) { %><div class="logo-row"><img src="<%= s.logo_path %>" alt="Logo" class="logo-preview"><button class="btn btn-danger-ghost btn-sm" type="submit" formaction="/admin/settings/logo/delete" formnovalidate formenctype="application/x-www-form-urlencoded">Supprimer le logo</button></div><% } %>
+      <input class="input" type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Questionnaire</h2>
+    <label class="check"><input type="checkbox" name="shuffle_blocks" value="1" <%= s.shuffle_blocks ? 'checked' : '' %>> Ordre aléatoire des blocs</label>
+    <label class="check"><input type="checkbox" name="shuffle_items" value="1" <%= s.shuffle_items ? 'checked' : '' %>> Ordre aléatoire des 4 items dans chaque bloc</label>
+    <label class="check"><input type="checkbox" name="allow_skip" value="1" <%= s.allow_skip ? 'checked' : '' %>> <span>Autoriser le bouton « Passer » <span class="muted small">(un bloc passé n'est pas compté, le score est moins fiable)</span></span></label>
+  </section>
+</div>
+<section class="panel">
+  <h2>Texte de consentement</h2>
+  <p class="muted small">Affiché avant le début du test ; le collaborateur doit cocher « J'accepte ». La date d'acceptation est enregistrée.</p>
+  <textarea class="input" name="consent_text" rows="8"><%= s.consent_text %></textarea>
+  <div class="actions"><button class="btn btn-primary" type="submit">Enregistrer les réglages</button></div>
+</section>
+</form>
+
+<div class="grid-2">
+  <section class="panel">
+    <h2>Exporter la base</h2>
+    <p class="muted small">Télécharge tout le contenu : comptes et mots de passe chiffrés, avatars, questions, profils, réglages et passations. Gardez ce fichier en lieu sûr. Le logo n'est pas inclus.</p>
+    <div class="actions"><a class="btn btn-primary" href="/admin/settings/export">Télécharger l'export (.db)</a></div>
+  </section>
+  <section class="panel">
+    <h2>Importer une base</h2>
+    <p class="muted small">Remplace <b>tout</b> le contenu actuel par celui du fichier exporté. Une sauvegarde de la base actuelle est gardée dans le dossier des données. Vous restez connecté avec vos identifiants actuels ; les autres comptes admin du fichier devront recevoir un nouveau lien d'invitation. L'URL publique, le logo et le lien de la carte restent ceux de ce serveur.</p>
+    <form method="post" action="/admin/settings/import" enctype="multipart/form-data" class="form">
+      <input class="input" type="file" name="database" accept=".db,.sqlite,.sqlite3,application/octet-stream" required>
+      <label class="field"><span>Tapez REMPLACER pour confirmer</span><input class="input" name="confirm" required pattern="REMPLACER" autocomplete="off"></label>
+      <div class="actions"><button class="btn btn-danger" type="submit">Importer et remplacer</button></div>
+    </form>
+  </section>
+</div>
