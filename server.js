@@ -71,6 +71,7 @@ app.use(loadUser);
 app.use(originCheck);
 
 /* ----------  Routes  ---------- */
+app.use('/mcp', require('./src/routes/mcp')); // API jeton pour le pilotage depuis Claude (MCP)
 app.use('/', require('./src/routes/auth'));
 app.use('/', require('./src/routes/liveScreen'));
 app.use('/admin', requireAdmin, require('./src/routes/admin'));

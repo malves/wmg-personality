@@ -9,7 +9,6 @@ services:
       - PORT=3001              # port visé par traefik/conf/dynamic/wmg-personality.yml
       - DATA_DIR=/app/data
       - TRUST_PROXY=1          # derrière Traefik : cookie secure, IP réelle
-      - BASE_URL=https://personality.kleekr.com
       - TZ=Europe/Paris
     volumes:
       - personality-data:/app/data

@@ -111,6 +111,45 @@ Serveur cible : `PROD_HOST` (défaut `srv03`), `PROD_DIR` (défaut `/production/
 | `TRUST_PROXY` | `1` derrière un reverse proxy HTTPS (cookie `secure`) | `0` |
 | `DATA_DIR` | dossier de la base et des uploads | `./data` |
 | `TZ` | fuseau horaire (salutation d'accueil, dates) | `Europe/Paris` en Docker |
+| `MCP_TOKEN` | jeton d'accès à l'API `/mcp` (pilotage depuis Claude) ; vide = désactivé | vide |
+
+## Pilotage depuis Claude (MCP)
+
+Un serveur MCP (`mcp/`) permet de piloter l'app depuis Claude Desktop : consulter les
+collaborateurs, résultats et groupes (**lecture seule**) et piloter la présentation du live
+(`start` / `next` / `prev` / `stop`).
+
+Il parle à l'app **en cours d'exécution** via le routeur `/mcp` (fichier `src/routes/mcp.js`),
+protégé par un jeton Bearer. C'est nécessaire pour le live : l'état de la présentation et les
+écrans connectés vivent dans la mémoire du serveur web.
+
+```bash
+# 1. Générer un jeton et l'activer côté serveur
+echo "MCP_TOKEN=$(openssl rand -hex 32)" >> .env   # puis relancer le serveur
+
+# 2. Installer les dépendances du serveur MCP
+cd mcp && npm install
+```
+
+Config Claude Desktop (`claude_desktop_config.json`), avec le **même** jeton :
+
+```json
+{
+  "mcpServers": {
+    "wmg-personality": {
+      "command": "node",
+      "args": ["/chemin/absolu/vers/wmg-personality/mcp/server.js"],
+      "env": {
+        "APP_URL": "http://localhost:3020",
+        "MCP_TOKEN": "collez-ici-le-meme-jeton-que-dans-.env"
+      }
+    }
+  }
+}
+```
+
+Outils exposés : `list_collaborators`, `get_result`, `compare_collaborators`, `live_snapshot`,
+`presentation_state`, `presentation_control`.
 
 ## Structure
 
@@ -123,7 +162,8 @@ src/auth.js               sessions SQLite, gardes, limiteur de connexion
 src/live.js               état du test en direct et diffusion (Server-Sent Events)
 src/groups.js             regroupement par similarité, position sur la carte DISC
 src/deck.js               déroulé de la présentation (pur, testé)
-src/routes/               auth, app (accueil, équipe, résultat), test (API), admin/*
+src/routes/               auth, app (accueil, équipe, résultat), test (API), mcp (API jeton), admin/*
+mcp/server.js             serveur MCP (stdio) pour piloter l'app depuis Claude
 src/views/                layouts + pages EJS
 src/seed/                 questions, profils, conseils, texte de consentement
 public/js/avatar.js       rendu SVG des avatars (schéma du builder, 26 réglages) et blobs, partagé serveur/navigateur

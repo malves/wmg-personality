@@ -15,7 +15,6 @@
 <body class="app-body">
   <div class="phone">
     <main class="screen" id="screen"><%- body %></main>
-    <% if (currentUser && !locals.hideNav) { %><%- include('../partials/nav') %><% } %>
   </div>
   <script src="/js/avatar.js?v=<%= assetVersion %>"></script>
   <%- script %>
