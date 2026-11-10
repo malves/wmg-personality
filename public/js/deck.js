@@ -109,9 +109,9 @@
     return `<h1 class="dk-title ${extra}" style="--d:${delay}ms" aria-label="${esc(text)}">${html}</h1>`;
   }
 
-  function avatarUrl(person) {
-    const key = JSON.stringify(person.avatar);
-    if (!avatars.has(key)) avatars.set(key, `data:image/svg+xml;charset=utf-8,${encodeURIComponent(K.renderAvatar(person.avatar, { expression: 'joy', background: false }))}`);
+  function avatarUrl(person, withBackground = false) {
+    const key = `${withBackground ? 'bg' : 'nobg'}:${JSON.stringify(person.avatar)}`;
+    if (!avatars.has(key)) avatars.set(key, `data:image/svg+xml;charset=utf-8,${encodeURIComponent(K.renderAvatar(person.avatar, { expression: 'joy', background: withBackground }))}`);
     return avatars.get(key);
   }
 
@@ -150,7 +150,7 @@
       const col = i - row * cols;
       const x = 50 + (col - (inRow - 1) / 2) * cell + (row % 2 ? cell / 4 : -cell / 4) + jitter(i, 'x');
       const y = y0 + (row + 0.5) * cellH + jitter(i, 'y') / RATIO;
-      return `<button type="button" class="dk-pal" data-name="${esc(p.firstName || '')}" aria-label="Agrandir cet avatar" style="left:${x.toFixed(2)}cqw;top:${y.toFixed(2)}cqh;--f:${(i % 5) * -0.9}s"><span class="lv-ring dk-face" style="--p:1;--ring:#fff;--d:${delay + i * 70}ms"><img alt="" src="${avatarUrl(p)}"></span></button>`;
+      return `<button type="button" class="dk-pal" data-name="${esc(p.firstName || '')}" aria-label="Agrandir cet avatar" style="left:${x.toFixed(2)}cqw;top:${y.toFixed(2)}cqh;--f:${(i % 5) * -0.9}s"><span class="lv-ring dk-face" style="--p:1;--ring:#fff;--d:${delay + i * 70}ms"><img alt="" src="${avatarUrl(p, true)}"></span></button>`;
     }).join('')}</div>`;
   }
 
