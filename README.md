@@ -111,41 +111,35 @@ Serveur cible : `PROD_HOST` (défaut `srv03`), `PROD_DIR` (défaut `/production/
 | `TRUST_PROXY` | `1` derrière un reverse proxy HTTPS (cookie `secure`) | `0` |
 | `DATA_DIR` | dossier de la base et des uploads | `./data` |
 | `TZ` | fuseau horaire (salutation d'accueil, dates) | `Europe/Paris` en Docker |
-| `MCP_TOKEN` | jeton d'accès à l'API `/mcp` (pilotage depuis Claude) ; vide = désactivé | vide |
+| `MCP_TOKEN` | jeton d'accès au serveur `/mcp` (pilotage depuis Claude) ; vide = désactivé | vide |
 
 ## Pilotage depuis Claude (MCP)
 
-Un serveur MCP (`mcp/`) permet de piloter l'app depuis Claude Desktop : consulter les
-collaborateurs, résultats et groupes (**lecture seule**) et piloter la présentation du live
-(`start` / `next` / `prev` / `stop`).
-
-Il parle à l'app **en cours d'exécution** via le routeur `/mcp` (fichier `src/routes/mcp.js`),
-protégé par un jeton Bearer. C'est nécessaire pour le live : l'état de la présentation et les
-écrans connectés vivent dans la mémoire du serveur web.
+L'app expose un **serveur MCP distant** sur `/mcp` (transport « Streamable HTTP », fichier
+`src/routes/mcp.js`). On l'ajoute dans Claude comme **connecteur par URL** — rien à installer
+côté client. Il permet de consulter collaborateurs, résultats et groupes (**lecture seule**) et
+de piloter la présentation du live (`start` / `next` / `prev` / `stop`).
 
 ```bash
-# 1. Générer un jeton et l'activer côté serveur
-echo "MCP_TOKEN=$(openssl rand -hex 32)" >> .env   # puis relancer le serveur
-
-# 2. Installer les dépendances du serveur MCP
-cd mcp && npm install
+# Activer côté serveur : générer un jeton et relancer
+echo "MCP_TOKEN=$(openssl rand -hex 32)" >> .env
 ```
 
-Config Claude Desktop (`claude_desktop_config.json`), avec le **même** jeton :
+Sans `MCP_TOKEN`, l'endpoint répond `503` (désactivé). L'accès est protégé par ce jeton, passé
+soit dans l'URL (`?key=…`), soit en en-tête `Authorization: Bearer …`.
 
-```json
-{
-  "mcpServers": {
-    "wmg-personality": {
-      "command": "node",
-      "args": ["/chemin/absolu/vers/wmg-personality/mcp/server.js"],
-      "env": {
-        "APP_URL": "http://localhost:3020",
-        "MCP_TOKEN": "collez-ici-le-meme-jeton-que-dans-.env"
-      }
-    }
-  }
-}
+Dans Claude (Paramètres → Connecteurs → ajouter un connecteur personnalisé), coller l'URL :
+
+```
+https://seminaire.kleekr.com/mcp?key=LE_JETON
+```
+
+Vérification rapide en ligne de commande :
+
+```bash
+curl -s -H 'Accept: application/json, text/event-stream' -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \
+  'https://seminaire.kleekr.com/mcp?key=LE_JETON'
 ```
 
 Outils exposés : `list_collaborators`, `get_result`, `compare_collaborators`, `live_snapshot`,
@@ -162,8 +156,7 @@ src/auth.js               sessions SQLite, gardes, limiteur de connexion
 src/live.js               état du test en direct et diffusion (Server-Sent Events)
 src/groups.js             regroupement par similarité, position sur la carte DISC
 src/deck.js               déroulé de la présentation (pur, testé)
-src/routes/               auth, app (accueil, équipe, résultat), test (API), mcp (API jeton), admin/*
-mcp/server.js             serveur MCP (stdio) pour piloter l'app depuis Claude
+src/routes/               auth, app (accueil, équipe, résultat), test (API), mcp (serveur MCP distant), admin/*
 src/views/                layouts + pages EJS
 src/seed/                 questions, profils, conseils, texte de consentement
 public/js/avatar.js       rendu SVG des avatars (schéma du builder, 26 réglages) et blobs, partagé serveur/navigateur

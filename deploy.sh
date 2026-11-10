@@ -4,7 +4,7 @@
 #
 # Usage :
 #   ./deploy.sh [tag]              # défaut : latest
-#   ./deploy.sh 1.2.0 --prod       # publie puis met la production à jour (alias : -p)
+#   ./deploy.sh 1.2.0 --prod       # publie puis met la production à jour (alias : --deploy, -p)
 #   ./deploy.sh list|--list|-l     # versions locales et distantes
 #
 # Avec --prod, une fois l'image publiée, le script se connecte en SSH au serveur,
@@ -192,7 +192,7 @@ PROD=0
 for arg in "$@"; do
   case "$arg" in
     list|--list|-l) list_versions ;;
-    --prod|-p) PROD=1 ;;
+    --prod|--deploy|-p) PROD=1 ;;
     -*)
       print_error "Option inconnue : $arg"
       exit 1

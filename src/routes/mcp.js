@@ -1,15 +1,19 @@
 'use strict';
 
 /**
- * API dédiée au serveur MCP (pilotage depuis Claude).
+ * Serveur MCP distant (transport « Streamable HTTP ») monté sur /mcp.
  *
- * Volontairement en dehors de l'espace admin à session : l'authentification se fait par un jeton
- * Bearer dédié (variable d'environnement MCP_TOKEN), comparé en temps constant. Sans MCP_TOKEN
- * défini, toute l'API répond 503 : le pilotage reste donc désactivé par défaut.
+ * À ajouter directement dans Claude comme connecteur par URL :
+ *   https://seminaire.kleekr.com/mcp?key=LE_JETON
  *
- * Portée actuelle : LECTURE SEULE pour les données (collaborateurs, résultats, groupes) +
- * pilotage du live/présentation, qui doit passer par ce serveur car l'état de la présentation
- * et les écrans connectés vivent dans sa mémoire (voir src/deck.js et src/live.js).
+ * L'accès est protégé par MCP_TOKEN (variable d'environnement), accepté soit dans l'URL
+ * (?key=…), soit en en-tête « Authorization: Bearer … ». Sans MCP_TOKEN défini, l'endpoint
+ * répond 503 : le MCP est donc désactivé par défaut.
+ *
+ * Tourne dans le process de l'app : les outils lisent la base directement et pilotent la même
+ * instance de présentation que les écrans connectés (voir src/live.js).
+ *
+ * Le SDK MCP est en ESM ; on le charge par import() dynamique depuis ce module CommonJS.
  */
 
 const express = require('express');
@@ -23,20 +27,15 @@ const { ACTIONS } = require('../deck');
 
 const router = express.Router();
 
-/* ----------  Authentification par jeton  ---------- */
+/* ----------  Authentification par jeton (URL ?key= ou en-tête Bearer)  ---------- */
 function tokenValid(req) {
   const expected = Buffer.from(process.env.MCP_TOKEN || '');
-  const given = Buffer.from((req.get('authorization') || '').replace(/^Bearer\s+/i, ''));
+  const fromHeader = (req.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  const given = Buffer.from(String(req.query.key || req.query.token || fromHeader || ''));
   return expected.length > 0 && expected.length === given.length && crypto.timingSafeEqual(expected, given);
 }
 
-router.use((req, res, next) => {
-  if (!process.env.MCP_TOKEN) return res.status(503).json({ error: 'MCP désactivé : définir MCP_TOKEN côté serveur.' });
-  if (!tokenValid(req)) return res.status(401).json({ error: 'Jeton MCP invalide.' });
-  return next();
-});
-
-/* ----------  Helpers  ---------- */
+/* ----------  Données (lecture)  ---------- */
 const stmtProfile = db.prepare('SELECT * FROM profiles WHERE key = ?');
 const stmtPair = db.prepare('SELECT text FROM pair_advice WHERE key = ?');
 
@@ -64,8 +63,7 @@ function resultOf(user) {
   };
 }
 
-/* ----------  Collaborateurs (lecture)  ---------- */
-router.get('/collaborators', (req, res) => {
+function listCollaborators() {
   const rows = db.prepare(`
     SELECT u.id, u.first_name, u.last_name, u.email, u.role, u.show_in_team,
            u.password_hash IS NOT NULL AS active, u.invite_token, u.invite_expires_at,
@@ -74,7 +72,7 @@ router.get('/collaborators', (req, res) => {
     ORDER BY u.role DESC, u.first_name COLLATE NOCASE, u.last_name COLLATE NOCASE
   `).all();
   const base = (getSettings().base_url || `http://localhost:${process.env.PORT || 3020}`).replace(/\/+$/, '');
-  const people = rows.map((u) => ({
+  return rows.map((u) => ({
     id: u.id,
     firstName: u.first_name,
     lastName: u.last_name,
@@ -88,60 +86,139 @@ router.get('/collaborators', (req, res) => {
     inviteLink: (!u.active && u.invite_token && u.invite_expires_at > Date.now())
       ? `${base}/invite/${u.invite_token}` : null,
   }));
-  res.json({ count: people.length, collaborators: people });
-});
+}
 
-/* ----------  Résultat d'une personne (lecture)  ---------- */
-router.get('/result/:id', (req, res) => {
-  const user = getUserById(Number(req.params.id));
-  if (!user) return res.status(404).json({ error: 'Collaborateur introuvable.' });
-  const result = resultOf(user);
-  res.json({
-    user: { id: user.id, firstName: user.first_name, lastName: user.last_name, email: user.email },
-    completed: !!result,
-    result,
-  });
-});
-
-/* ----------  Comparaison de deux personnes (lecture)  ---------- */
-router.get('/compare/:a/:b', (req, res) => {
-  const a = getUserById(Number(req.params.a));
-  const b = getUserById(Number(req.params.b));
-  if (!a || !b) return res.status(404).json({ error: 'Collaborateur introuvable.' });
+function compareUsers(idA, idB) {
+  const a = getUserById(idA);
+  const b = getUserById(idB);
+  if (!a || !b) throw new Error('Collaborateur introuvable.');
   const ra = resultOf(a);
   const rb = resultOf(b);
-  if (!ra || !rb) return res.status(409).json({ error: 'Les deux personnes doivent avoir terminé le test.' });
+  if (!ra || !rb) throw new Error('Les deux personnes doivent avoir terminé le test.');
   const key = disc.pairKey(ra.primary, rb.primary);
-  res.json({
+  return {
     a: { id: a.id, firstName: a.first_name, ...ra },
     b: { id: b.id, firstName: b.first_name, ...rb },
     pairKey: key,
     advice: (stmtPair.get(key) || {}).text || '',
-  });
-});
+  };
+}
 
-/* ----------  Groupes + photo du live (lecture)  ---------- */
-router.get('/live', (req, res) => {
+function liveSnapshot() {
   const snap = live.snapshot();
-  res.json({
+  return {
     state: snap.state,
     counts: snap.counts,
     groups: snap.groups.map((g) => ({ id: g.id, name: g.name, members: g.members })),
     alone: snap.alone,
     feed: snap.feed,
-  });
-});
+  };
+}
 
-/* ----------  Pilotage de la présentation (action)  ---------- */
-router.get('/presentation', (req, res) => res.json(live.deck.view()));
-
-router.post('/presentation', (req, res) => {
-  const action = String((req.body || {}).action || '');
-  if (!ACTIONS.includes(action)) {
-    return res.status(400).json({ error: `Commande inconnue. Attendu : ${ACTIONS.join(', ')}.` });
+/* ----------  Construction du serveur MCP (SDK ESM chargé à la volée)  ---------- */
+let sdkPromise = null;
+function loadSdk() {
+  if (!sdkPromise) {
+    sdkPromise = (async () => {
+      const [{ McpServer }, { StreamableHTTPServerTransport }, zod] = await Promise.all([
+        import('@modelcontextprotocol/sdk/server/mcp.js'),
+        import('@modelcontextprotocol/sdk/server/streamableHttp.js'),
+        import('zod'),
+      ]);
+      return { McpServer, StreamableHTTPServerTransport, z: zod.z };
+    })();
   }
-  live.deck[action]();
-  res.json(live.deck.view());
+  return sdkPromise;
+}
+
+const asJson = (data) => ({ content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] });
+const asError = (e) => ({ isError: true, content: [{ type: 'text', text: `Erreur : ${e.message}` }] });
+
+/** Un serveur neuf par requête : recommandé pour le mode « stateless » du transport HTTP. */
+function buildServer({ McpServer, z }) {
+  const server = new McpServer({ name: 'wmg-personality', version: '1.2.0' });
+
+  server.registerTool('list_collaborators', {
+    title: 'Lister les collaborateurs',
+    description: "Liste tous les comptes : état du compte, avancement du test, profil, et lien d'invitation encore valide le cas échéant.",
+    inputSchema: {},
+  }, async () => { try { return asJson(listCollaborators()); } catch (e) { return asError(e); } });
+
+  server.registerTool('get_result', {
+    title: "Résultat d'un collaborateur",
+    description: 'Résultat DISC (profil, dimension dominante, scores) pour un collaborateur identifié par son id.',
+    inputSchema: { id: z.number().int().positive().describe('Identifiant du collaborateur') },
+  }, async ({ id }) => {
+    try {
+      const user = getUserById(id);
+      if (!user) throw new Error('Collaborateur introuvable.');
+      return asJson({
+        user: { id: user.id, firstName: user.first_name, lastName: user.last_name, email: user.email },
+        completed: !!resultOf(user), result: resultOf(user),
+      });
+    } catch (e) { return asError(e); }
+  });
+
+  server.registerTool('compare_collaborators', {
+    title: 'Comparer deux collaborateurs',
+    description: 'Compare deux personnes ayant terminé le test : profils, couple de dimensions et conseil de collaboration.',
+    inputSchema: {
+      idA: z.number().int().positive().describe('Identifiant de la 1re personne'),
+      idB: z.number().int().positive().describe('Identifiant de la 2e personne'),
+    },
+  }, async ({ idA, idB }) => { try { return asJson(compareUsers(idA, idB)); } catch (e) { return asError(e); } });
+
+  server.registerTool('live_snapshot', {
+    title: 'Photo du live',
+    description: 'État de la session en direct : avancement (counts), groupes et membres, personnes seules, dernières réponses.',
+    inputSchema: {},
+  }, async () => { try { return asJson(liveSnapshot()); } catch (e) { return asError(e); } });
+
+  server.registerTool('presentation_state', {
+    title: 'État de la présentation',
+    description: "Indique si la présentation est active et, si oui, la diapositive courante.",
+    inputSchema: {},
+  }, async () => { try { return asJson(live.deck.view()); } catch (e) { return asError(e); } });
+
+  server.registerTool('presentation_control', {
+    title: 'Piloter la présentation',
+    description: "Pilote la présentation projetée. `start` démarre, `next`/`prev` changent de diapositive, `stop` revient à la carte.",
+    inputSchema: { action: z.enum(['start', 'next', 'prev', 'stop']).describe('Commande à exécuter') },
+  }, async ({ action }) => {
+    try {
+      if (!ACTIONS.includes(action)) throw new Error(`Commande inconnue. Attendu : ${ACTIONS.join(', ')}.`);
+      live.deck[action]();
+      return asJson(live.deck.view());
+    } catch (e) { return asError(e); }
+  });
+
+  return server;
+}
+
+/* ----------  Endpoint HTTP  ---------- */
+const jsonRpcError = (code, message) => ({ jsonrpc: '2.0', error: { code, message }, id: null });
+
+router.use((req, res, next) => {
+  if (!process.env.MCP_TOKEN) return res.status(503).json(jsonRpcError(-32000, 'MCP désactivé : définir MCP_TOKEN côté serveur.'));
+  if (!tokenValid(req)) return res.status(401).json(jsonRpcError(-32001, 'Jeton MCP invalide.'));
+  return next();
 });
+
+router.post('/', async (req, res) => {
+  try {
+    const sdk = await loadSdk();
+    const server = buildServer(sdk);
+    const transport = new sdk.StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+    res.on('close', () => { transport.close(); server.close(); });
+    await server.connect(transport);
+    await transport.handleRequest(req, res, req.body);
+  } catch (e) {
+    if (!res.headersSent) res.status(500).json(jsonRpcError(-32603, `Erreur interne : ${e.message}`));
+  }
+});
+
+// En mode stateless, pas de flux serveur->client hors réponse : GET/DELETE non supportés.
+router.get('/', (req, res) => res.status(405).json(jsonRpcError(-32000, 'Method Not Allowed.')));
+router.delete('/', (req, res) => res.status(405).json(jsonRpcError(-32000, 'Method Not Allowed.')));
 
 module.exports = router;
