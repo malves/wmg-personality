@@ -124,6 +124,36 @@
     return `<div class="dk-crowd" style="--a:${size}cqw">${people.map((p, i) => `<span class="lv-ring dk-face" style="--p:1;--ring:${['#F07A6E', '#F6C644', '#7CD39A', '#6EC1F5'][i % 4]};--d:${delay + i * 34}ms"><img alt="" src="${avatarUrl(p)}"></span>`).join('')}</div>`;
   }
 
+  /**
+   * Les avatars en grand, éparpillés comme sur la carte du live, pour que chacun s'y cherche.
+   * Grille en quinconce légèrement bousculée : rien ne se chevauche, et l'ordre mélangé ne dit rien des résultats.
+   */
+  function gallery(delay, empty) {
+    const people = (snap ? snap.people : []).slice().sort((a, b) => ((a.id * 7919) % 101) - ((b.id * 7919) % 101)).slice(0, 48);
+    if (!people.length) return `<p class="dk-note dk-in" style="--d:${delay}ms">${esc(empty)}</p>`;
+    const n = people.length;
+    const W = 86, TOP = 30, BOTTOM = 89, RATIO = 9 / 16; // zone libre sous le titre ; 1cqh = 0,5625cqw
+    const H = (BOTTOM - TOP) * RATIO; // hauteur de la zone, en cqw
+    let cols = 1, cell = 0;
+    for (let c = 1; c <= n; c++) {
+      const size = Math.min(W / (c + 0.5), H / Math.ceil(n / c));
+      if (size > cell) { cell = size; cols = c; }
+    }
+    const rows = Math.ceil(n / cols);
+    const size = Math.min(14, cell * 0.8);
+    const cellH = cell / RATIO; // en cqh
+    const y0 = (TOP + BOTTOM) / 2 - (rows * cellH) / 2;
+    const jitter = (i, k) => ((((i + 1) * (k === 'x' ? 7919 : 104729)) % 97) / 97 - 0.5) * cell * 0.16;
+    return `<div class="dk-gallery" style="--a:${size.toFixed(2)}cqw">${people.map((p, i) => {
+      const row = Math.floor(i / cols);
+      const inRow = row === rows - 1 ? n - row * cols : cols;
+      const col = i - row * cols;
+      const x = 50 + (col - (inRow - 1) / 2) * cell + (row % 2 ? cell / 4 : -cell / 4) + jitter(i, 'x');
+      const y = y0 + (row + 0.5) * cellH + jitter(i, 'y') / RATIO;
+      return `<button type="button" class="dk-pal" data-name="${esc(p.firstName || '')}" aria-label="Agrandir cet avatar" style="left:${x.toFixed(2)}cqw;top:${y.toFixed(2)}cqh;--f:${(i % 5) * -0.9}s"><span class="lv-ring dk-face" style="--p:1;--ring:#fff;--d:${delay + i * 70}ms"><img alt="" src="${avatarUrl(p)}"></span></button>`;
+    }).join('')}</div>`;
+  }
+
   function greeting() {
     const hour = new Date().getHours();
     if (hour < 5) return 'Bonne nuit';
@@ -144,6 +174,13 @@
         ${read(s.say, 700)}
         ${crowd(2100)}
       </div>`,
+
+    faces: (s) => `<div class="dk-center is-top is-tight">
+        ${eyebrow(s.eyebrow)}
+        ${title(s.title, 120, 'is-small')}
+        ${read(s.say, 900, 'is-small')}
+      </div>
+      ${gallery(1800, s.empty)}`,
 
     scene: (s) => `<div class="dk-center is-top is-tight">
         ${eyebrow(s.eyebrow)}
@@ -188,6 +225,26 @@
       </div>
       <div class="dk-center is-foot">${read(s.say, 1300, 'is-small')}</div>`,
 
+    method: (s) => `<div class="dk-left is-method">
+        ${eyebrow(s.eyebrow)}
+        ${title(s.title, 120, 'is-small')}
+        ${read(s.say, 900, 'is-small')}
+        <ol class="dk-steps">${s.steps.map((t, i) => `<li class="dk-in" style="--d:${6200 + i * 900}ms"><i>${i + 1}</i>${esc(fill(t))}</li>`).join('')}</ol>
+      </div>
+      <div class="dk-compare">
+        <div class="dk-cmp is-classic dk-in" style="--d:1500ms">
+          <small>${esc(s.classic.label)}</small>
+          <p class="dk-cmp-q">${esc(s.classic.question)}</p>
+          <div class="dk-scale">${[1, 2, 3, 4, 5].map((n) => `<span class="${n === 5 ? 'is-on' : ''}">${n}</span>`).join('')}</div>
+          <p class="dk-cmp-verdict dk-in" style="--d:2900ms">${esc(s.classic.verdict)}</p>
+        </div>
+        <div class="dk-cmp is-disc dk-in" style="--d:4200ms">
+          <small>${esc(s.disc.label)}</small>
+          <div class="dk-words">${ORDER.map((d, i) => `<span class="dk-in" style="--d:${4500 + i * 140}ms;--c:${dims[d].color}"><i></i>${esc(s.disc.words[d])}</span>`).join('')}</div>
+          <p class="dk-cmp-verdict dk-in" style="--d:5400ms">${esc(s.disc.verdict)}</p>
+        </div>
+      </div>`,
+
     survey: (s) => `<div class="dk-left is-survey">
         ${eyebrow(s.eyebrow)}
         ${read(s.say, 240, 'is-big')}
@@ -227,7 +284,80 @@
     },
     survey: runSurvey,
     map: runMap,
+    faces: runFaces,
   };
+
+  /**
+   * Jeu « Qui est-ce ? » : un clic sur un avatar l'agrandit au centre, fond flouté.
+   * Un clic sur le grand avatar le retourne et montre le prénom ; un clic sur le prénom le renvoie à sa place.
+   * Un clic à côté ou Échap referme à tout moment. Le zoom reste local à l'écran cliqué.
+   */
+  function runFaces(s, layer) {
+    let open = null;
+
+    function close() {
+      if (!open) return;
+      const { zoom, card, from, src, onKey } = open;
+      open = null;
+      document.removeEventListener('keydown', onKey, true);
+      zoom.classList.remove('is-on');
+      zoom.classList.add('is-closing');
+      const done = () => { zoom.remove(); src.classList.remove('is-lifted'); };
+      if (reduced) { done(); return; }
+      card.animate([{ transform: 'none' }, { transform: from }], { duration: 480, easing: 'cubic-bezier(.23, 1, .32, 1)', fill: 'forwards' }).onfinish = done;
+    }
+
+    function zoomOn(btn) {
+      const ring = btn.querySelector('.lv-ring');
+      const name = btn.dataset.name || '?';
+      const zoom = document.createElement('div');
+      zoom.className = 'dk-zoom';
+      zoom.innerHTML = `<div class="dk-zoom-card" role="button" tabindex="0" aria-label="Retourner pour voir le prénom">
+          <div class="dk-flip">
+            <div class="dk-side lv-ring"><img alt="" src="${btn.querySelector('img').getAttribute('src')}"></div>
+            <div class="dk-side is-back" style="--len:${Math.max(4, [...name].length)}"><small>C'est</small><b>${esc(name)}</b></div>
+          </div>
+        </div>`;
+      layer.appendChild(zoom);
+      const card = zoom.firstElementChild;
+      const a = ring.getBoundingClientRect();
+      const b = card.getBoundingClientRect();
+      const from = `translate(${(a.left + a.width / 2 - (b.left + b.width / 2)).toFixed(1)}px, ${(a.top + a.height / 2 - (b.top + b.height / 2)).toFixed(1)}px) scale(${(a.width / b.width).toFixed(4)})`;
+      btn.classList.add('is-lifted');
+      void zoom.offsetWidth;
+      zoom.classList.add('is-on');
+      if (!reduced) {
+        card.animate([{ transform: from }, { transform: 'none' }], { duration: 760, easing: 'linear(0, .054, .183, .349, .521, .68, .815, .92, .996, 1.045, 1.073, 1.083, 1.081, 1.072, 1.059, 1.045, 1.031, 1.019, 1.009, 1.002, .997, .994, .993, .993, .994, .995, 1)' });
+      }
+      const onKey = (ev) => {
+        if (ev.key === 'Escape') { ev.preventDefault(); close(); }
+        else if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === card) { ev.preventDefault(); tapCard(); }
+      };
+      document.addEventListener('keydown', onKey, true);
+      open = { zoom, card, from, src: btn, onKey, flipped: false };
+      card.focus({ preventScroll: true });
+    }
+
+    /** Premier clic : on retourne la carte. Second clic, sur le prénom : on dézoome. */
+    function tapCard() {
+      if (!open) return;
+      if (open.flipped) { close(); return; }
+      open.flipped = true;
+      open.zoom.classList.add('is-flipped');
+      open.card.setAttribute('aria-label', 'Refermer');
+    }
+
+    layer.addEventListener('click', (ev) => {
+      if (open) {
+        if (ev.target.closest('.dk-zoom-card')) tapCard();
+        else close();
+        return;
+      }
+      const btn = ev.target.closest('.dk-pal');
+      if (btn) zoomOn(btn);
+    });
+  }
+
 
   function runSurvey(s, layer) {
     const phone = layer.querySelector('.dk-phone');
@@ -283,12 +413,26 @@
       return start + 3000 * pace;
     }
 
-    draw(s.demo[0]);
+    // Tirage au sort des réponses : jamais deux fois le même couple d'une question à l'autre.
+    let prev = null;
+    function randomPick() {
+      let most, least;
+      do {
+        most = Math.floor(Math.random() * 4);
+        least = (most + 1 + Math.floor(Math.random() * 3)) % 4;
+      } while (prev && (most === prev.most || least === prev.least));
+      prev = { most, least };
+      return prev;
+    }
+    const demos = s.demo.map((d) => ({ ...d, ...randomPick() }));
+
+    draw(demos[0]);
     showCount(1);
-    let t = answer(s.demo[0], 1, 700, 1);
-    t = answer(s.demo[1], 2, t, 0.72);
-    // Les blocs suivants défilent : on voit la longueur du test sans s'y attarder.
+    let t = answer(demos[0], 1, 700, 1);
+    t = answer(demos[1], 2, t, 1);
+    // Les blocs suivants défilent : on voit la longueur du test sans s'y attarder, mais sans précipitation.
     const remaining = Math.max(0, total - 2);
+    const STEP = 240;
     later(() => {
       finger.classList.remove('is-on');
       nextBtn.classList.remove('is-ready');
@@ -296,18 +440,19 @@
       body.querySelector('.dk-choices').className = 'dk-choices is-fast';
     }, t);
     for (let n = 0; n < remaining; n++) {
+      const { most, least } = randomPick();
       later(() => {
         showCount(n + 3);
         body.querySelectorAll('.dk-choice').forEach((el, i) => {
-          el.classList.toggle('is-most', i === (n * 3 + 1) % 4);
-          el.classList.toggle('is-least', i === (n * 3 + 3) % 4);
+          el.classList.toggle('is-most', i === most);
+          el.classList.toggle('is-least', i === least);
         });
-      }, t + n * 62);
+      }, t + n * STEP);
     }
     later(() => {
       body.innerHTML = `<div class="dk-finish">${K.renderBlob({ color: dims.S.color, face: 'sparkle' })}<b>C'est terminé !</b></div>`;
       ORDER.forEach(hop);
-    }, t + remaining * 62 + 120);
+    }, t + remaining * STEP + 400);
   }
 
   /** Points anonymes : la carte est expliquée sans montrer le résultat de personne. */

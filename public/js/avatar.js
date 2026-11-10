@@ -18,11 +18,17 @@
      Palettes et schéma du builder
      ====================================================================== */
   const SKIN_TONES = ['#FDE3D0', '#F6CDB0', '#E7B48E', '#D9A077', '#C9906B', '#B07A55', '#A06B48', '#8A5A3C', '#70492F', '#4E3222'];
-  const HAIR_COLORS = ['#1F1A17', '#4A3222', '#7A4F2B', '#B06A3C', '#D9A552', '#F1D28A', '#8E8E93', '#F2F2F2', '#C94A6A', '#4F7BD9', '#7B5CC9', '#3FA66B', '#F28CB8', '#FF8A3D'];
+  /** Poivre et sel : gris foncé de base, mêlé de mèches blanches au rendu (voir saltPepper). */
+  const SALT_PEPPER = '#5F6063';
+  const HAIR_COLORS = ['#1F1A17', '#4A3222', '#7A4F2B', '#B06A3C', '#D9A552', '#F1D28A', SALT_PEPPER, '#8E8E93', '#F2F2F2', '#C94A6A', '#4F7BD9', '#7B5CC9', '#3FA66B', '#F28CB8', '#FF8A3D'];
   const EYE_COLORS = ['#3B2A1A', '#5A8FD6', '#4F8A5B', '#7A7F86', '#8B6B3E', '#1E8C8A', '#8F5FBF', '#2C2C2C'];
-  const JACKET_COLORS = ['#F2C96B', '#F07A6E', '#6EC1F5', '#7CD39A', '#C9B6F2', '#F28CB8', '#2E3440', '#F4F4F6', '#D97A3B', '#5E6B8A', '#3B5BA5', '#1E7F6E', '#8C2F39', '#E9D8A6'];
-  const ACCENT_COLORS = ['#FFFFFF', '#1C1D22', '#F2C96B', '#F07A6E', '#6EC1F5', '#7CD39A', '#F28CB8', '#C9B6F2'];
-  const HAT_COLORS = ['#3A66C4', '#2E3440', '#D64545', '#F2C96B', '#7CD39A', '#F28CB8', '#F4F4F6', '#8C5A3C', '#6F2E5B', '#1E7F6E'];
+  const JACKET_COLORS = ['#F2C96B', '#F07A6E', '#D63A3A', '#B3202A', '#8C2F39', '#E8505B', '#F28C28', '#D97A3B', '#D4A017',
+    '#6EC1F5', '#A9D3F5', '#3B5BA5', '#1F2A44', '#5E6B8A', '#2BB3B1', '#7CD39A', '#1E7F6E', '#2F5D3A', '#6B7A3A',
+    '#C9B6F2', '#6A3FA0', '#F28CB8', '#D63384', '#E9D8A6', '#D8C3A5', '#B9835A', '#7A5230', '#F4F4F6', '#9AA0A6', '#2E3440', '#1C1D22'];
+  const ACCENT_COLORS = ['#FFFFFF', '#1C1D22', '#9AA0A6', '#F2C96B', '#F07A6E', '#D63A3A', '#6EC1F5', '#1F2A44', '#7CD39A', '#F28CB8', '#C9B6F2', '#E9D8A6'];
+  /** Couleur spéciale « Italie » : le couvre-chef est peint en bandes vert-blanc-rouge. */
+  const ITALIA = '#009247';
+  const HAT_COLORS = ['#3A66C4', '#2E3440', '#D64545', '#F2C96B', '#7CD39A', '#F28CB8', '#F4F4F6', '#8C5A3C', '#6F2E5B', '#1E7F6E', ITALIA];
   const NECK_COLORS = ['#D64545', '#2E3440', '#3B5BA5', '#F2C96B', '#7CD39A', '#F28CB8', '#F4F4F6', '#6F2E5B'];
   const BG_COLORS = ['#DCE8F2', '#FBE7D9', '#E3F3E6', '#EEE6FB', '#FDE6EE', '#F3F4F6', '#FFF1C2', '#CFE9F0', '#2B3A55'];
 
@@ -39,10 +45,11 @@
    */
   const SCHEMA = [
     { key: 'faceShape', label: 'Forme du visage', group: 'face', type: 'choice', zoom: 'head',
-      options: [{ v: 'oval', l: 'Ovale' }, { v: 'round', l: 'Rond' }, { v: 'square', l: 'Carré' }, { v: 'heart', l: 'Cœur' }, { v: 'long', l: 'Allongé' }] },
+      options: [{ v: 'oval', l: 'Ovale' }, { v: 'round', l: 'Rond' }, { v: 'square', l: 'Carré' }, { v: 'heart', l: 'Cœur' }, { v: 'long', l: 'Allongé' },
+                { v: 'diamond', l: 'Losange' }, { v: 'triangle', l: 'Mâchoire large' }, { v: 'rectangle', l: 'Rectangulaire' }, { v: 'wide', l: 'Large' }] },
     { key: 'skin', label: 'Teint', group: 'face', type: 'color', options: SKIN_TONES },
     { key: 'body', label: 'Morphologie', group: 'face', type: 'choice',
-      options: [{ v: 'slim', l: 'Fine' }, { v: 'medium', l: 'Moyenne' }, { v: 'broad', l: 'Large' }] },
+      options: [{ v: 'slim', l: 'Fine' }, { v: 'medium', l: 'Moyenne' }, { v: 'broad', l: 'Large' }, { v: 'giant', l: 'Très grand (tête hors cadre)' }, { v: 'tiny', l: 'Tout petit (dépasse à peine)' }] },
     { key: 'nose', label: 'Nez', group: 'face', type: 'choice', zoom: 'face',
       options: [{ v: 'small', l: 'Petit' }, { v: 'medium', l: 'Moyen' }, { v: 'long', l: 'Long' }, { v: 'button', l: 'Rond' }, { v: 'wide', l: 'Large' }] },
     { key: 'lips', label: 'Lèvres', group: 'face', type: 'tint',
@@ -52,12 +59,15 @@
       options: [{ v: 'none', l: 'Aucun' }, { v: 'freckles', l: 'Taches de rousseur' }, { v: 'beautymark', l: 'Grain de beauté' }, { v: 'blush', l: 'Joues rosées' }, { v: 'nosering', l: 'Piercing' }] },
     { key: 'facialHair', label: 'Pilosité', group: 'face', type: 'choice', zoom: 'head',
       options: [{ v: 'none', l: 'Aucune' }, { v: 'stubble', l: 'Barbe de 3 jours' }, { v: 'mustache', l: 'Moustache' }, { v: 'handlebar', l: 'Moustache en guidon' },
-                { v: 'goatee', l: 'Bouc' }, { v: 'soulpatch', l: 'Mouche' }, { v: 'chinstrap', l: 'Collier' }, { v: 'beard', l: 'Barbe' }, { v: 'fullbeard', l: 'Barbe longue' }] },
+                { v: 'goatee', l: 'Bouc' }, { v: 'soulpatch', l: 'Mouche' }, { v: 'chinstrap', l: 'Collier' }, { v: 'beard', l: 'Barbe' }, { v: 'fullbeard', l: 'Barbe longue' },
+                { v: 'stubblemustache', l: 'Barbe de 3 jours et moustache' }, { v: 'shortbeard', l: 'Barbe courte' }, { v: 'pencil', l: 'Moustache fine' },
+                { v: 'horseshoe', l: 'Fer à cheval' }, { v: 'sideburns', l: 'Favoris' }] },
 
     { key: 'hair', label: 'Coiffure', group: 'hair', type: 'choice', zoom: 'head',
-      options: [{ v: 'short', l: 'Courte' }, { v: 'sidepart', l: 'Raie sur le côté' }, { v: 'wavy', l: 'Ondulée' }, { v: 'curly', l: 'Bouclée' }, { v: 'buzz', l: 'Rasée' },
+      options: [{ v: 'short', l: 'Courte' }, { v: 'sidepart', l: 'Raie sur le côté' }, { v: 'quiff', l: 'Raie et mèche relevée' }, { v: 'wavy', l: 'Ondulée' }, { v: 'curly', l: 'Bouclée' }, { v: 'buzz', l: 'Rasée' },
                 { v: 'bald', l: 'Chauve' }, { v: 'pixie', l: 'Pixie' }, { v: 'bangs', l: 'Frange' }, { v: 'spiky', l: 'Hérissée' }, { v: 'mohawk', l: 'Crête' },
-                { v: 'bob', l: 'Carré' }, { v: 'long', l: 'Longue' }, { v: 'longbangs', l: 'Longue avec frange' }, { v: 'ponytail', l: 'Queue de cheval' },
+                { v: 'bob', l: 'Carré' }, { v: 'long', l: 'Longue' }, { v: 'longbangs', l: 'Longue avec frange' },
+                { v: 'longcurly', l: 'Bouclée mi-longue' }, { v: 'longwavy', l: 'Longue ondulée' }, { v: 'middlepart', l: 'Mi-longue raie au milieu' }, { v: 'slickback', l: 'Plaquée en arrière' }, { v: 'ponytail', l: 'Queue de cheval' },
                 { v: 'bun', l: 'Chignon' }, { v: 'doublebun', l: 'Deux chignons' }, { v: 'braids', l: 'Tresses' }, { v: 'locs', l: 'Locks' }, { v: 'afro', l: 'Afro' }] },
     { key: 'hairColor', label: 'Couleur des cheveux', group: 'hair', type: 'color', options: HAIR_COLORS },
 
@@ -79,7 +89,11 @@
 
     { key: 'jacket', label: 'Vêtement', group: 'outfit', type: 'choice',
       options: [{ v: 'puffer', l: 'Doudoune' }, { v: 'hoodie', l: 'Sweat à capuche' }, { v: 'blazer', l: 'Blazer' }, { v: 'tee', l: 'T-shirt' }, { v: 'shirt', l: 'Chemise' },
-                { v: 'polo', l: 'Polo' }, { v: 'turtleneck', l: 'Col roulé' }, { v: 'vneck', l: 'Pull col V' }, { v: 'cardigan', l: 'Cardigan' }, { v: 'denim', l: 'Veste en jean' }] },
+                { v: 'polo', l: 'Polo' }, { v: 'turtleneck', l: 'Col roulé' }, { v: 'vneck', l: 'Pull col V' }, { v: 'cardigan', l: 'Cardigan' }, { v: 'denim', l: 'Veste en jean' },
+                { v: 'sweatshirt', l: 'Sweat col rond' }, { v: 'knit', l: 'Pull torsadé' }, { v: 'ziphoodie', l: 'Sweat zippé' }, { v: 'quarterzip', l: 'Pull col zippé' },
+                { v: 'tracksuit', l: 'Veste de survêtement' }, { v: 'bomber', l: 'Blouson bomber' }, { v: 'leather', l: 'Perfecto' }, { v: 'trench', l: 'Trench' },
+                { v: 'suit', l: 'Costume' }, { v: 'waistcoat', l: 'Gilet de costume' }, { v: 'mandarin', l: 'Chemise col mao' }, { v: 'overshirt', l: 'Chemise ouverte sur t-shirt' },
+                { v: 'puffervest', l: 'Doudoune sans manches' }, { v: 'overalls', l: 'Salopette' }, { v: 'blouse', l: 'Blouse à lavallière' }, { v: 'wrap', l: 'Haut cache-cœur' }] },
     { key: 'jacketColor', label: 'Couleur du vêtement', group: 'outfit', type: 'color', options: JACKET_COLORS },
     { key: 'accent', label: 'Couleur secondaire', group: 'outfit', type: 'color', options: ACCENT_COLORS },
     { key: 'pattern', label: 'Motif', group: 'outfit', type: 'choice',
@@ -87,18 +101,20 @@
 
     { key: 'hat', label: 'Tête', group: 'extras', type: 'choice', zoom: 'head',
       options: [{ v: 'none', l: 'Rien' }, { v: 'cap', l: 'Casquette' }, { v: 'beanie', l: 'Bonnet' }, { v: 'beret', l: 'Béret' }, { v: 'bucket', l: 'Bob' },
-                { v: 'headband', l: 'Bandeau' }, { v: 'headphones', l: 'Casque audio' }, { v: 'hijab', l: 'Hijab', rare: true }] },
+                { v: 'headband', l: 'Bandeau' }, { v: 'headphones', l: 'Casque audio' }, { v: 'hardhat', l: 'Casque de chantier' }, { v: 'bikehelmet', l: 'Casque de vélo' }, { v: 'chef', l: 'Toque de cuisinier' }, { v: 'hijab', l: 'Hijab', rare: true }] },
     { key: 'hatColor', label: 'Couleur', group: 'extras', type: 'color', options: HAT_COLORS },
     { key: 'earrings', label: 'Boucles d\'oreilles', group: 'extras', type: 'choice', zoom: 'face',
       options: [{ v: 'none', l: 'Aucune' }, { v: 'studs', l: 'Puces' }, { v: 'hoops', l: 'Créoles' }, { v: 'drops', l: 'Pendantes' }] },
     { key: 'neck', label: 'Cou', group: 'extras', type: 'choice',
       options: [{ v: 'none', l: 'Rien' }, { v: 'scarf', l: 'Écharpe' }, { v: 'necklace', l: 'Collier' }, { v: 'chain', l: 'Chaîne' },
                 { v: 'tie', l: 'Cravate' }, { v: 'bowtie', l: 'Nœud papillon' }, { v: 'lanyard', l: 'Badge' }] },
+    { key: 'vest', label: 'Par-dessus', group: 'extras', type: 'choice',
+      options: [{ v: 'none', l: 'Rien' }, { v: 'hivis', l: 'Gilet jaune', rare: true }] },
     { key: 'neckColor', label: 'Couleur', group: 'extras', type: 'color', options: NECK_COLORS },
 
     { key: 'background', label: 'Fond', group: 'bg', type: 'choice',
       options: [{ v: 'city', l: 'Ville' }, { v: 'office', l: 'Bureau' }, { v: 'park', l: 'Parc' }, { v: 'beach', l: 'Plage' },
-                { v: 'mountains', l: 'Montagne' }, { v: 'night', l: 'Nuit' }, { v: 'blobs', l: 'Bulles' }, { v: 'plain', l: 'Uni' }] },
+                { v: 'mountains', l: 'Montagne' }, { v: 'road', l: 'Route' }, { v: 'station', l: 'Gare' }, { v: 'japan', l: 'Japon' }, { v: 'pisa', l: 'Tour de Pise' }, { v: 'night', l: 'Nuit' }, { v: 'blobs', l: 'Bulles' }, { v: 'plain', l: 'Uni' }] },
     { key: 'backgroundColor', label: 'Couleur du fond', group: 'bg', type: 'color', options: BG_COLORS },
   ];
 
@@ -108,7 +124,7 @@
     hair: 'short', hairColor: '#1F1A17',
     eyes: 'round', eyeColor: '#3B2A1A', lashes: 'none', brows: 'straight', glasses: 'none', glassesColor: 'auto',
     jacket: 'puffer', jacketColor: '#F2C96B', accent: '#FFFFFF', pattern: 'none',
-    hat: 'none', hatColor: '#3A66C4', earrings: 'none', neck: 'none', neckColor: '#D64545',
+    hat: 'none', hatColor: '#3A66C4', earrings: 'none', neck: 'none', neckColor: '#D64545', vest: 'none',
     background: 'city', backgroundColor: '#DCE8F2',
   };
 
@@ -206,17 +222,13 @@
     thinking: 'Réflexion', doubt: 'Doute', sad: 'Tristesse', wink: 'Clin d\'œil',
   };
 
-  /** Émotions affichées pendant le test (décoratives : ne révèlent jamais la dimension mesurée). */
+  /** Émotions affichées pendant le test (décoratives, toujours positives : ne révèlent jamais la dimension mesurée). */
   const EMOTIONS = [
     { key: 'joie', label: 'Joie', color: '#F6C644', expression: 'joy', face: 'happy' },
     { key: 'curiosite', label: 'Curiosité', color: '#6EC1F5', expression: 'thinking', face: 'focused' },
-    { key: 'stress', label: 'Stress', color: '#7CD39A', expression: 'stress', face: 'worried' },
-    { key: 'peur', label: 'Peur', color: '#C9B6F2', expression: 'fear', face: 'worried' },
     { key: 'surprise', label: 'Surprise', color: '#F4A261', expression: 'surprise', face: 'surprised' },
     { key: 'serenite', label: 'Sérénité', color: '#5EC8E0', expression: 'neutral', face: 'calm' },
     { key: 'fierte', label: 'Fierté', color: '#F28CB8', expression: 'proud', face: 'determined' },
-    { key: 'doute', label: 'Doute', color: '#8A8FE0', expression: 'doubt', face: 'sleepy' },
-    { key: 'nostalgie', label: 'Nostalgie', color: '#9BB8D4', expression: 'sad', face: 'sleepy' },
     { key: 'malice', label: 'Malice', color: '#F07A6E', expression: 'wink', face: 'happy' },
   ];
 
@@ -234,7 +246,13 @@
     straight: { w: 6.5, arch: 1 }, arched: { w: 6, arch: 7 }, thick: { w: 9, arch: 2 }, thin: { w: 4, arch: 3 },
     rounded: { w: 7, arch: 5 }, angled: { w: 7, arch: 0, tilt: -5 }, bushy: { w: 11, arch: 2 },
   };
-  const BODY_SCALE = { slim: 0.9, medium: 1, broad: 1.13 };
+  const BODY_SCALE = { slim: 0.9, medium: 1, broad: 1.13, giant: 0.8, tiny: 1 };
+  /** Très grand : tout le personnage remonte, la tête sort du cadre et on ne voit plus que le menton. */
+  const GIANT_LIFT = 205;
+  /** Longueur du buste et des bras quand le personnage est très grand (il doit remplir le cadre jusqu'en bas). */
+  const GIANT_LEN = 700;
+  /** Tout petit : le personnage descend sous le cadre, seuls le haut des cheveux et un bout de front dépassent. */
+  const TINY_DROP = 258;
 
   const HEAD = { cx: 200, cy: 150, rx: 62, ry: 72 };
   const EYE_Y = 152, EYE_LX = 178, EYE_RX = 222, BROW_Y = 128;
@@ -245,6 +263,10 @@
     round: { ear: 66, hair: 1.09, ellipse: { rx: 67, ry: 69 } },
     long: { ear: 56, hair: 0.93, hairY: 1.09, ellipse: { rx: 57, ry: 78 } },
     square: { ear: 61, hair: 1, d: 'M 200 80 C 238 80 260 100 260 130 L 260 172 C 260 206 234 222 200 222 C 166 222 140 206 140 172 L 140 130 C 140 100 162 80 200 80 Z' },
+    diamond: { ear: 59, hair: 1.03, d: 'M 200 78 C 226 78 246 98 258 128 C 266 148 262 166 250 186 C 236 208 218 224 200 224 C 182 224 164 208 150 186 C 138 166 134 148 142 128 C 154 98 174 78 200 78 Z' },
+    triangle: { ear: 62, hair: 0.96, d: 'M 200 80 C 230 80 250 98 254 126 C 260 150 266 176 258 198 C 248 216 226 224 200 224 C 174 224 152 216 142 198 C 134 176 140 150 146 126 C 150 98 170 80 200 80 Z' },
+    rectangle: { ear: 58, hair: 0.95, hairY: 1.06, d: 'M 200 76 C 236 76 256 94 256 124 L 256 186 C 256 214 232 228 200 228 C 168 228 144 214 144 186 L 144 124 C 144 94 164 76 200 76 Z' },
+    wide: { ear: 69, hair: 1.13, ellipse: { rx: 70, ry: 70 } },
     heart: { ear: 58, hair: 1.06, d: 'M 200 80 C 242 78 266 104 264 136 C 262 168 236 200 212 218 Q 200 228 188 218 C 164 200 138 168 136 136 C 134 104 158 78 200 80 Z' },
   };
 
@@ -258,6 +280,15 @@
   }
   const earOffset = (c) => (FACE_SHAPES[c.faceShape] || FACE_SHAPES.oval).ear;
   /** La chevelure suit la largeur du visage, et sa hauteur pour le visage allongé ; l'ovale d'origine reste tel quel. */
+  /** Poivre et sel : rejoue les formes remplies avec la chevelure, cette fois avec les mèches blanches et noires. */
+  function saltPepper(id, c, svg) {
+    if (c.hairColor !== SALT_PEPPER || !svg) return svg;
+    const ref = `url(#${id}-hair)`;
+    const shapes = svg.match(/<(path|circle|ellipse|rect)\b[^>]*\/>/g) || [];
+    const overlay = shapes.filter((el) => el.includes(`fill="${ref}"`)).map((el) => el.replace(`fill="${ref}"`, `fill="url(#${id}-sp)"`)).join('');
+    return svg + overlay;
+  }
+
   function fitHair(c, svg) {
     const shape = FACE_SHAPES[c.faceShape] || FACE_SHAPES.oval;
     const ky = shape.hairY || 1;
@@ -271,9 +302,23 @@
 <radialGradient id="${id}-hair" cx="40%" cy="25%" r="80%"><stop offset="0" stop-color="${lighten(c.hairColor, 0.22)}"/><stop offset="0.5" stop-color="${c.hairColor}"/><stop offset="1" stop-color="${darken(c.hairColor, 0.3)}"/></radialGradient>
 <radialGradient id="${id}-jacket" cx="40%" cy="20%" r="85%"><stop offset="0" stop-color="${lighten(c.jacketColor, 0.2)}"/><stop offset="0.55" stop-color="${c.jacketColor}"/><stop offset="1" stop-color="${darken(c.jacketColor, 0.25)}"/></radialGradient>
 <linearGradient id="${id}-band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${lighten(c.jacketColor, 0.3)}"/><stop offset="0.5" stop-color="${c.jacketColor}"/><stop offset="1" stop-color="${darken(c.jacketColor, 0.22)}"/></linearGradient>
+<radialGradient id="${id}-under" cx="40%" cy="20%" r="85%"><stop offset="0" stop-color="${lighten(c.accent, 0.2)}"/><stop offset="0.55" stop-color="${c.accent}"/><stop offset="1" stop-color="${darken(c.accent, 0.18)}"/></radialGradient>
+<linearGradient id="${id}-uband" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${lighten(c.accent, 0.3)}"/><stop offset="0.5" stop-color="${c.accent}"/><stop offset="1" stop-color="${darken(c.accent, 0.16)}"/></linearGradient>
 <linearGradient id="${id}-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.backgroundColor}"/><stop offset="1" stop-color="${lighten(c.backgroundColor, 0.55)}"/></linearGradient>
 <filter id="${id}-blur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter>
 <filter id="${id}-soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>`;
+    if (c.hairColor === SALT_PEPPER) {
+      let strands = '';
+      let seed = 11;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+      // Fines mèches, beaucoup et à des angles variés, sur une grande tuile pour que la répétition ne se voie pas.
+      for (let i = 0; i < 90; i++) {
+        const x = rnd() * 60, y = rnd() * 60, a = (rnd() - 0.5) * 1.4, l = 2 + rnd() * 3;
+        const light = rnd() < 0.7;
+        strands += `<path d="M ${x.toFixed(1)} ${y.toFixed(1)} l ${(Math.sin(a) * l).toFixed(1)} ${(Math.cos(a) * l).toFixed(1)}" stroke="${light ? '#E9E9EC' : '#262628'}" stroke-width="0.9" stroke-linecap="round" opacity="${(light ? 0.4 : 0.3) + rnd() * 0.2}"/>`;
+      }
+      s += `\n<pattern id="${id}-sp" width="60" height="60" patternUnits="userSpaceOnUse">${strands}</pattern>`;
+    }
     if (c.pattern !== 'none') {
       const ink = luminance(c.jacketColor) > 150 ? 'rgba(0,0,0,0.16)' : 'rgba(255,255,255,0.26)';
       const motif = c.pattern === 'stripes' ? `<rect width="22" height="9" fill="${ink}"/>`
@@ -322,6 +367,92 @@
 <ellipse cx="200" cy="400" rx="320" ry="110" fill="#F2DCA8"/>
 <ellipse cx="200" cy="396" rx="300" ry="86" fill="#FFF3D6" opacity="0.5"/>
 <path d="M 332 150 L 326 290" stroke="#8C6A4A" stroke-width="6" stroke-linecap="round"/><path d="M 330 150 q -40 -30 -56 2 q 30 -6 56 -2 M 330 150 q 40 -28 60 4 q -30 -8 -60 -4 M 330 150 q -14 -40 -42 -40 q 26 12 42 40 M 330 150 q 16 -40 44 -36 q -26 10 -44 36" fill="#4F9A5C"/>
+</g>`;
+    }
+    if (c.background === 'road') {
+      // Route en perspective jusqu'à l'horizon, bas-côtés en herbe, arbres et panneau.
+      let dashes = '';
+      for (const [y, h, w] of [[190, 8, 2], [214, 14, 3], [250, 22, 4.5], [304, 34, 6], [372, 46, 8]]) dashes += `<rect x="${200 - w / 2}" y="${y}" width="${w}" height="${h}" fill="#FFFFFF" opacity="0.9"/>`;
+      return `<rect width="400" height="400" fill="url(#${id}-sky)"/>
+<g filter="url(#${id}-blur)">
+<path d="M -20 186 Q 80 150 160 176 Q 240 140 420 180 L 420 200 L -20 200 Z" fill="${tone(0.35)}" opacity="0.6"/>
+<rect x="0" y="182" width="400" height="218" fill="#8CC48A"/>
+<path d="M 0 182 L 400 182 L 400 200 L 0 200 Z" fill="#A7D3A0" opacity="0.7"/>
+<path d="M 192 182 L 208 182 L 400 360 L 400 400 L 0 400 L 0 360 Z" fill="#6B7078"/>
+<path d="M 192 182 L 0 360 M 208 182 L 400 360" stroke="#FFFFFF" stroke-width="3" opacity="0.8"/>
+${dashes}
+<circle cx="70" cy="170" r="22" fill="#5E9E6C"/><rect x="66" y="180" width="8" height="26" fill="#8C6A4A"/>
+<circle cx="330" cy="160" r="30" fill="#6FAF72"/><rect x="325" y="176" width="10" height="34" fill="#8C6A4A"/>
+<circle cx="132" cy="178" r="12" fill="#78B77A"/><circle cx="270" cy="176" r="14" fill="#78B77A"/>
+<rect x="44" y="222" width="5" height="70" fill="#9AA0A6"/><circle cx="46.5" cy="214" r="16" fill="#FFFFFF"/><circle cx="46.5" cy="214" r="13" fill="#D64545"/><circle cx="46.5" cy="214" r="9" fill="#FFFFFF"/>
+</g>`;
+    }
+    if (c.background === 'station') {
+      // Quai de gare : marquise et piliers, horloge, tableau des départs, train à quai, voie.
+      return `<rect width="400" height="400" fill="${lighten(bg, 0.2)}"/>
+<g filter="url(#${id}-blur)">
+<rect x="0" y="0" width="400" height="70" fill="${tone(0.55)}"/>
+<path d="M 0 70 L 400 70 L 400 84 L 0 84 Z" fill="${tone(0.7)}"/>
+<path d="M 0 0 L 60 70 M 100 0 L 130 70 M 200 0 L 200 70 M 300 0 L 270 70 M 400 0 L 340 70" stroke="${tone(0.75)}" stroke-width="4"/>
+<rect x="40" y="84" width="10" height="220" fill="${tone(0.6)}"/><rect x="350" y="84" width="10" height="220" fill="${tone(0.6)}"/>
+<rect x="250" y="96" width="120" height="44" rx="4" fill="#1F2A44"/>
+<rect x="258" y="104" width="54" height="5" fill="#F2C96B"/><rect x="318" y="104" width="44" height="5" fill="#FFFFFF" opacity="0.8"/>
+<rect x="258" y="116" width="54" height="5" fill="#F2C96B"/><rect x="318" y="116" width="34" height="5" fill="#FFFFFF" opacity="0.8"/>
+<rect x="258" y="128" width="54" height="5" fill="#F2C96B"/><rect x="318" y="128" width="40" height="5" fill="#FFFFFF" opacity="0.8"/>
+<circle cx="96" cy="118" r="22" fill="#FFFFFF" stroke="${tone(0.7)}" stroke-width="5"/><path d="M 96 118 L 96 104 M 96 118 L 106 122" stroke="#2B2D33" stroke-width="3" stroke-linecap="round"/>
+<rect x="-10" y="160" width="300" height="120" rx="26" fill="#E9ECF1"/>
+<rect x="-10" y="244" width="300" height="14" fill="#D64545"/>
+<rect x="10" y="182" width="56" height="40" rx="6" fill="#5C7896"/><rect x="82" y="182" width="56" height="40" rx="6" fill="#5C7896"/><rect x="154" y="182" width="56" height="40" rx="6" fill="#5C7896"/><rect x="226" y="182" width="50" height="40" rx="6" fill="#5C7896"/>
+<rect x="0" y="280" width="400" height="16" fill="#8A8F99"/>
+<rect x="0" y="296" width="400" height="104" fill="${tone(0.3)}"/>
+<rect x="0" y="296" width="400" height="10" fill="#F2C96B"/>
+<path d="M 0 304 L 400 304" stroke="#2B2D33" stroke-width="2" stroke-dasharray="14 10" opacity="0.4"/>
+</g>`;
+    }
+    if (c.background === 'japan') {
+      // Japon : ciel rosé, soleil rouge, mont Fuji enneigé, torii, pagode, branches de cerisier en fleurs.
+      return `<rect width="400" height="400" fill="#FBE9E4"/>
+<g filter="url(#${id}-blur)">
+<rect x="0" y="0" width="400" height="200" fill="#F9DCD6" opacity="0.7"/>
+<circle cx="200" cy="96" r="54" fill="#E24B4B" opacity="0.9"/>
+<path d="M -20 260 L 150 132 Q 200 112 250 132 L 420 260 Z" fill="#8FA3BF"/>
+<path d="M 150 132 Q 200 112 250 132 L 274 150 Q 256 146 244 156 Q 230 144 216 158 Q 200 144 186 158 Q 170 144 156 156 Q 144 146 126 150 Z" fill="#FFFFFF"/>
+<rect x="0" y="250" width="400" height="150" fill="#9CC79A"/>
+<rect x="0" y="292" width="400" height="108" fill="#86B886"/>
+<g fill="#D8392F">
+<rect x="34" y="150" width="9" height="146"/><rect x="101" y="150" width="9" height="146"/>
+<path d="M 14 136 Q 72 128 130 136 L 128 146 Q 72 140 16 146 Z"/><rect x="24" y="160" width="96" height="7"/>
+<rect x="68" y="146" width="7" height="14"/>
+</g>
+<path d="M 14 136 Q 72 128 130 136 L 130 130 Q 72 121 14 130 Z" fill="#2B2D33"/>
+<g fill="#7A4A3A">
+<rect x="318" y="142" width="44" height="22"/><rect x="322" y="180" width="36" height="20"/><rect x="326" y="216" width="28" height="80"/>
+</g>
+<g fill="#3A3F4A">
+<path d="M 296 168 L 384 168 Q 360 158 340 132 Q 320 158 296 168 Z"/>
+<path d="M 302 204 L 378 204 Q 358 194 340 176 Q 322 194 302 204 Z"/>
+<path d="M 306 240 L 374 240 Q 356 230 340 212 Q 324 230 306 240 Z"/>
+</g>
+<rect x="338" y="112" width="4" height="22" fill="#3A3F4A"/>
+<path d="M -10 30 Q 60 50 150 20 M 410 60 Q 340 60 270 20" stroke="#6B4A3A" stroke-width="5" fill="none" stroke-linecap="round"/>
+<circle cx="27" cy="25" r="7.6" fill="#F7C6D4"/><circle cx="64" cy="23" r="7.3" fill="#FBDDE6"/><circle cx="18" cy="22" r="6.7" fill="#F7C6D4"/><circle cx="9" cy="38" r="8.3" fill="#F7C6D4"/><circle cx="74" cy="48" r="7.3" fill="#F7C6D4"/><circle cx="46" cy="37" r="8.9" fill="#F7C6D4"/><circle cx="44" cy="24" r="6.7" fill="#FBDDE6"/><circle cx="11" cy="33" r="8.3" fill="#F7C6D4"/><circle cx="10" cy="45" r="5.8" fill="#F7C6D4"/><circle cx="44" cy="21" r="5.2" fill="#F7C6D4"/><circle cx="40" cy="44" r="8.1" fill="#F3A9BF"/><circle cx="47" cy="40" r="6.2" fill="#F7C6D4"/><circle cx="55" cy="30" r="7.3" fill="#FBDDE6"/><circle cx="40" cy="34" r="6.8" fill="#FBDDE6"/><circle cx="146" cy="8" r="6.7" fill="#F3A9BF"/><circle cx="84" cy="25" r="5.2" fill="#FBDDE6"/><circle cx="78" cy="29" r="8.2" fill="#F3A9BF"/><circle cx="98" cy="19" r="7.0" fill="#F3A9BF"/><circle cx="77" cy="6" r="6.1" fill="#FBDDE6"/><circle cx="122" cy="5" r="7.8" fill="#FBDDE6"/><circle cx="116" cy="35" r="6.8" fill="#FBDDE6"/><circle cx="101" cy="34" r="5.1" fill="#F3A9BF"/><circle cx="349" cy="57" r="7.0" fill="#F7C6D4"/><circle cx="380" cy="34" r="6.0" fill="#F3A9BF"/><circle cx="392" cy="52" r="5.7" fill="#F3A9BF"/><circle cx="364" cy="70" r="8.3" fill="#FBDDE6"/><circle cx="343" cy="48" r="6.4" fill="#F3A9BF"/><circle cx="395" cy="35" r="5.7" fill="#F7C6D4"/><circle cx="372" cy="29" r="8.3" fill="#F7C6D4"/><circle cx="342" cy="28" r="6.7" fill="#F3A9BF"/><circle cx="368" cy="43" r="5.5" fill="#FBDDE6"/><circle cx="394" cy="59" r="8.0" fill="#F3A9BF"/><circle cx="390" cy="65" r="8.5" fill="#FBDDE6"/><circle cx="352" cy="47" r="5.4" fill="#FBDDE6"/><circle cx="352" cy="37" r="8.9" fill="#F3A9BF"/><circle cx="334" cy="44" r="5.2" fill="#F7C6D4"/><circle cx="305" cy="26" r="8.8" fill="#FBDDE6"/><circle cx="264" cy="42" r="7.5" fill="#F7C6D4"/><circle cx="310" cy="46" r="7.4" fill="#F3A9BF"/><circle cx="271" cy="41" r="9.0" fill="#F3A9BF"/><circle cx="299" cy="15" r="5.6" fill="#FBDDE6"/><circle cx="288" cy="13" r="8.3" fill="#F7C6D4"/><circle cx="301" cy="10" r="8.8" fill="#F3A9BF"/><circle cx="273" cy="26" r="5.1" fill="#FBDDE6"/>
+<ellipse cx="150" cy="110" rx="3" ry="1.8" fill="#F3A9BF" transform="rotate(30 150 110)"/><ellipse cx="262" cy="90" rx="3" ry="1.8" fill="#F3A9BF" transform="rotate(-20 262 90)"/><ellipse cx="90" cy="170" rx="3" ry="1.8" fill="#F3A9BF" transform="rotate(50 90 170)"/><ellipse cx="330" cy="190" rx="3" ry="1.8" fill="#F3A9BF" transform="rotate(10 330 190)"/><ellipse cx="30" cy="250" rx="3" ry="1.8" fill="#F3A9BF" transform="rotate(-40 30 250)"/><ellipse cx="370" cy="270" rx="3" ry="1.8" fill="#F3A9BF" transform="rotate(25 370 270)"/>
+</g>`;
+    }
+    if (c.background === 'pisa') {
+      // Tour de Pise penchée sur la gauche (pour ne pas être cachée par la tête), pelouse de la Piazza dei Miracoli, cyprès.
+      return `<rect width="400" height="400" fill="url(#${id}-sky)"/>
+<g filter="url(#${id}-blur)">
+<circle cx="330" cy="70" r="26" fill="#FFF0B8" opacity="0.9"/>
+<path d="M 230 250 L 230 214 Q 300 196 400 214 L 400 250 Z" fill="#EFE5D3"/>
+<path d="M 236 214 L 236 250 M 262 208 L 262 250 M 288 204 L 288 250 M 314 202 L 314 250 M 340 202 L 340 250 M 366 204 L 366 250" stroke="#D3C6AD" stroke-width="5"/>
+<ellipse cx="320" cy="200" rx="34" ry="22" fill="#E5D9C3"/>
+<rect x="0" y="250" width="400" height="150" fill="#8CC48A"/>
+<rect x="0" y="300" width="400" height="100" fill="#7AB878"/>
+<path d="M 0 258 L 400 258" stroke="#E8DFCF" stroke-width="10"/>
+<g transform="translate(80 262) rotate(-8) scale(0.86) translate(0 -300)"><rect x="-37.0" y="260" width="74" height="40" fill="#F3EBDD"/><rect x="-40.0" y="256" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 297 L -34.1 270 A 4.5 4.5 0 0 1 -25.1 270 L -25.1 297 Z" fill="#CDBFA6"/><path d="M -19.3 297 L -19.3 270 A 4.5 4.5 0 0 1 -10.3 270 L -10.3 297 Z" fill="#CDBFA6"/><path d="M -4.5 297 L -4.5 270 A 4.5 4.5 0 0 1 4.5 270 L 4.5 297 Z" fill="#CDBFA6"/><path d="M 10.3 297 L 10.3 270 A 4.5 4.5 0 0 1 19.3 270 L 19.3 297 Z" fill="#CDBFA6"/><path d="M 25.1 297 L 25.1 270 A 4.5 4.5 0 0 1 34.1 270 L 34.1 297 Z" fill="#CDBFA6"/><rect x="-37.0" y="228" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="224" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 253 L -34.1 238 A 4.5 4.5 0 0 1 -25.1 238 L -25.1 253 Z" fill="#CDBFA6"/><path d="M -19.3 253 L -19.3 238 A 4.5 4.5 0 0 1 -10.3 238 L -10.3 253 Z" fill="#CDBFA6"/><path d="M -4.5 253 L -4.5 238 A 4.5 4.5 0 0 1 4.5 238 L 4.5 253 Z" fill="#CDBFA6"/><path d="M 10.3 253 L 10.3 238 A 4.5 4.5 0 0 1 19.3 238 L 19.3 253 Z" fill="#CDBFA6"/><path d="M 25.1 253 L 25.1 238 A 4.5 4.5 0 0 1 34.1 238 L 34.1 253 Z" fill="#CDBFA6"/><rect x="-37.0" y="196" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="192" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 221 L -34.1 206 A 4.5 4.5 0 0 1 -25.1 206 L -25.1 221 Z" fill="#CDBFA6"/><path d="M -19.3 221 L -19.3 206 A 4.5 4.5 0 0 1 -10.3 206 L -10.3 221 Z" fill="#CDBFA6"/><path d="M -4.5 221 L -4.5 206 A 4.5 4.5 0 0 1 4.5 206 L 4.5 221 Z" fill="#CDBFA6"/><path d="M 10.3 221 L 10.3 206 A 4.5 4.5 0 0 1 19.3 206 L 19.3 221 Z" fill="#CDBFA6"/><path d="M 25.1 221 L 25.1 206 A 4.5 4.5 0 0 1 34.1 206 L 34.1 221 Z" fill="#CDBFA6"/><rect x="-37.0" y="164" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="160" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 189 L -34.1 174 A 4.5 4.5 0 0 1 -25.1 174 L -25.1 189 Z" fill="#CDBFA6"/><path d="M -19.3 189 L -19.3 174 A 4.5 4.5 0 0 1 -10.3 174 L -10.3 189 Z" fill="#CDBFA6"/><path d="M -4.5 189 L -4.5 174 A 4.5 4.5 0 0 1 4.5 174 L 4.5 189 Z" fill="#CDBFA6"/><path d="M 10.3 189 L 10.3 174 A 4.5 4.5 0 0 1 19.3 174 L 19.3 189 Z" fill="#CDBFA6"/><path d="M 25.1 189 L 25.1 174 A 4.5 4.5 0 0 1 34.1 174 L 34.1 189 Z" fill="#CDBFA6"/><rect x="-37.0" y="132" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="128" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 157 L -34.1 142 A 4.5 4.5 0 0 1 -25.1 142 L -25.1 157 Z" fill="#CDBFA6"/><path d="M -19.3 157 L -19.3 142 A 4.5 4.5 0 0 1 -10.3 142 L -10.3 157 Z" fill="#CDBFA6"/><path d="M -4.5 157 L -4.5 142 A 4.5 4.5 0 0 1 4.5 142 L 4.5 157 Z" fill="#CDBFA6"/><path d="M 10.3 157 L 10.3 142 A 4.5 4.5 0 0 1 19.3 142 L 19.3 157 Z" fill="#CDBFA6"/><path d="M 25.1 157 L 25.1 142 A 4.5 4.5 0 0 1 34.1 142 L 34.1 157 Z" fill="#CDBFA6"/><rect x="-37.0" y="100" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="96" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 125 L -34.1 110 A 4.5 4.5 0 0 1 -25.1 110 L -25.1 125 Z" fill="#CDBFA6"/><path d="M -19.3 125 L -19.3 110 A 4.5 4.5 0 0 1 -10.3 110 L -10.3 125 Z" fill="#CDBFA6"/><path d="M -4.5 125 L -4.5 110 A 4.5 4.5 0 0 1 4.5 110 L 4.5 125 Z" fill="#CDBFA6"/><path d="M 10.3 125 L 10.3 110 A 4.5 4.5 0 0 1 19.3 110 L 19.3 125 Z" fill="#CDBFA6"/><path d="M 25.1 125 L 25.1 110 A 4.5 4.5 0 0 1 34.1 110 L 34.1 125 Z" fill="#CDBFA6"/><rect x="-37.0" y="68" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="64" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 93 L -34.1 78 A 4.5 4.5 0 0 1 -25.1 78 L -25.1 93 Z" fill="#CDBFA6"/><path d="M -19.3 93 L -19.3 78 A 4.5 4.5 0 0 1 -10.3 78 L -10.3 93 Z" fill="#CDBFA6"/><path d="M -4.5 93 L -4.5 78 A 4.5 4.5 0 0 1 4.5 78 L 4.5 93 Z" fill="#CDBFA6"/><path d="M 10.3 93 L 10.3 78 A 4.5 4.5 0 0 1 19.3 78 L 19.3 93 Z" fill="#CDBFA6"/><path d="M 25.1 93 L 25.1 78 A 4.5 4.5 0 0 1 34.1 78 L 34.1 93 Z" fill="#CDBFA6"/><rect x="-27.0" y="42" width="54" height="22" fill="#F3EBDD"/><path d="M -24.2 61 L -24.2 50 A 4 4 0 0 1 -16.2 50 L -16.2 61 Z" fill="#CDBFA6"/><path d="M -10.8 61 L -10.8 50 A 4 4 0 0 1 -2.8 50 L -2.8 61 Z" fill="#CDBFA6"/><path d="M 2.8 61 L 2.8 50 A 4 4 0 0 1 10.8 50 L 10.8 61 Z" fill="#CDBFA6"/><path d="M 16.2 61 L 16.2 50 A 4 4 0 0 1 24.2 50 L 24.2 61 Z" fill="#CDBFA6"/><rect x="-30.0" y="38" width="60" height="5" fill="#E2D6C0"/></g>
+<path d="M 176 250 Q 168 200 180 150 Q 192 200 186 250 Z" fill="#3F7A4A"/>
+<path d="M 380 252 Q 372 200 386 160 Q 398 200 392 252 Z" fill="#3F7A4A"/>
 </g>`;
     }
     if (c.background === 'mountains') {
@@ -382,22 +513,159 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
   /* ----------  Corps / vêtement  ---------- */
   function arm(id, c, x, angle) {
     const jk = c.jacketColor;
+    const len = c.body === 'giant' ? GIANT_LEN : 200;
     const puffer = c.jacket === 'puffer';
+    // Sans manches ou à bretelles : on voit les manches du haut porté dessous.
+    const under = UNDER_SLEEVES.includes(c.jacket);
     let s = `<g transform="translate(${x} 300) rotate(${angle})">`;
-    s += `<rect x="-44" y="-26" width="88" height="200" rx="44" fill="url(#${id}-band)"/>`;
+    s += `<rect x="-44" y="-26" width="88" height="${len}" rx="44" fill="url(#${id}-${under ? 'uband' : 'band'})"/>`;
+    if (c.jacket === 'tracksuit') {
+      const side = x < 200 ? -1 : 1;
+      s += `<rect x="${side > 0 ? 18 : -30}" y="-20" width="5" height="${len - 4}" fill="${c.accent}"/><rect x="${side > 0 ? 26 : -22}" y="-20" width="5" height="${len - 4}" fill="${c.accent}"/>`;
+    }
     if (puffer) {
-      for (const y of [30, 88, 146]) {
+      for (let y = 30; y < len - 40; y += 58) {
         s += `<rect x="-44" y="${y}" width="88" height="58" rx="29" fill="url(#${id}-band)" stroke="${darken(jk, 0.2)}" stroke-opacity="0.35" stroke-width="1.5"/>`;
       }
     } else {
-      s += `<rect x="-44" y="-26" width="88" height="200" rx="44" fill="${darken(jk, 0.3)}" opacity="0.1"/>`;
+      s += `<rect x="-44" y="-26" width="88" height="${len}" rx="44" fill="${darken(under ? c.accent : jk, 0.3)}" opacity="0.1"/>`;
     }
     s += '</g>';
     return s;
   }
 
   /** Vêtements sur lesquels le motif s'applique (pas sur les matelassages ni le jean). */
-  const PATTERNED = ['tee', 'hoodie', 'shirt', 'polo', 'turtleneck', 'vneck'];
+  const PATTERNED = ['tee', 'hoodie', 'shirt', 'polo', 'turtleneck', 'vneck', 'sweatshirt', 'ziphoodie', 'mandarin', 'overshirt', 'blouse', 'wrap'];
+  /** Tenues qui laissent voir les manches du vêtement porté dessous (couleur secondaire). */
+  const UNDER_SLEEVES = ['puffervest', 'overalls', 'waistcoat'];
+  /** Tenues dont le buste est d'abord rempli par le vêtement porté dessous. */
+  const UNDER_BODY = ['overalls', 'waistcoat'];
+
+  /** Revers de veste (costume, trench) : col cranté, de l'épaule jusqu'au premier bouton. */
+  function lapels(jk, bottom) {
+    const fill = darken(jk, 0.06);
+    const edge = darken(jk, 0.32);
+    let s = '';
+    for (const side of [-1, 1]) {
+      const X = (x) => 200 + side * (x - 200);
+      const d = `M ${X(162)} 248 L ${X(200)} ${bottom} L ${X(190)} ${bottom + 4} L ${X(146)} 286 L ${X(156)} 276 L ${X(148)} 262 Z`;
+      s += `<path d="${d}" fill="${fill}" stroke="${edge}" stroke-width="1.6" stroke-linejoin="round"/>`;
+    }
+    return s;
+  }
+  /** Fermeture éclair verticale avec son curseur. */
+  const zip = (x, y0, y1, jk) => `<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" stroke="${darken(jk, 0.4)}" stroke-width="2.5" stroke-opacity="0.6"/><rect x="${x - 4}" y="${y0 + 2}" width="8" height="15" rx="2.5" fill="#C9CBD3" stroke="#8E919B" stroke-width="1"/>`;
+  /** Bande côtelée qui suit une courbe (col, bord-côte). */
+  const rib = (d, color, w) => `<path d="${d}" stroke="${color}" stroke-width="${w}" stroke-dasharray="1.6 4" fill="none" opacity="0.4"/>`;
+
+  /** Détails du buste des tenues ajoutées (dessinés par-dessus le fond du buste). */
+  function torsoMore(id, c, jk, ac) {
+    let s = '';
+    const dk = (t) => darken(jk, t);
+    switch (c.jacket) {
+      case 'sweatshirt':
+        s += `<path d="M 168 262 L 118 322 M 232 262 L 282 322" stroke="${dk(0.25)}" stroke-width="2" opacity="0.4"/>`;
+        s += `<rect x="96" y="452" width="208" height="24" fill="${dk(0.08)}"/>`;
+        break;
+      case 'knit':
+        for (const x of [146, 200, 254]) {
+          let d = `M ${x} 270`;
+          for (let y = 270; y < 476; y += 14) d += ` Q ${x + 9} ${y + 7} ${x} ${y + 14}`;
+          let e = `M ${x} 277`;
+          for (let y = 277; y < 476; y += 14) e += ` Q ${x - 9} ${y + 7} ${x} ${y + 14}`;
+          s += `<path d="${d}" stroke="${dk(0.28)}" stroke-width="3" fill="none" opacity="0.45"/><path d="${e}" stroke="${lighten(jk, 0.25)}" stroke-width="3" fill="none" opacity="0.5"/>`;
+          s += `<path d="M ${x - 16} 270 L ${x - 16} 476 M ${x + 16} 270 L ${x + 16} 476" stroke="${dk(0.25)}" stroke-width="1.4" opacity="0.35"/>`;
+        }
+        break;
+      case 'ziphoodie':
+        s += `<path d="M 130 340 L 196 348 L 196 400 Q 160 404 130 396 Z M 270 340 L 204 348 L 204 400 Q 240 404 270 396 Z" fill="${dk(0.12)}" opacity="0.55"/>`;
+        s += `<path d="M 186 262 L 182 316 M 214 262 L 218 316" stroke="${lighten(jk, 0.5)}" stroke-width="4" stroke-linecap="round"/>`;
+        s += zip(200, 262, 476, jk);
+        break;
+      case 'quarterzip':
+        s += zip(200, 268, 326, jk);
+        break;
+      case 'tracksuit':
+        s += zip(200, 266, 476, jk);
+        break;
+      case 'bomber':
+        s += zip(200, 268, 476, jk);
+        s += `<path d="M 238 300 L 262 300" stroke="${dk(0.4)}" stroke-width="3" stroke-linecap="round"/><rect x="246" y="296" width="5" height="10" rx="1.5" fill="#C9CBD3"/>`;
+        s += `<rect x="96" y="444" width="208" height="32" fill="${dk(0.1)}"/>${rib('M 96 460 L 304 460', dk(0.3), 30)}`;
+        break;
+      case 'leather':
+        s += `<path d="M 164 256 L 236 256 L 222 292 L 196 336 Z" fill="url(#${id}-under)"/>`;
+        s += `<path d="M 156 244 L 196 336 L 172 342 L 138 292 Z" fill="${dk(0.08)}" stroke="${dk(0.4)}" stroke-width="1.5" stroke-linejoin="round"/>`;
+        s += `<path d="M 244 244 L 222 292 L 240 316 L 266 284 Z" fill="${dk(0.08)}" stroke="${dk(0.4)}" stroke-width="1.5" stroke-linejoin="round"/>`;
+        s += `<path d="M 222 292 L 222 476" stroke="#B8BBC4" stroke-width="3"/><path d="M 196 336 L 196 476" stroke="${dk(0.4)}" stroke-width="1.5" opacity="0.6"/>`;
+        s += `<circle cx="168" cy="334" r="3.5" fill="#C9CBD3"/><circle cx="256" cy="290" r="3.5" fill="#C9CBD3"/>`;
+        s += `<path d="M 116 368 L 160 360 M 240 360 L 284 368" stroke="#B8BBC4" stroke-width="2.5" stroke-linecap="round"/>`;
+        s += `<path d="M 112 300 Q 146 288 170 318" stroke="#fff" stroke-width="5" fill="none" opacity="0.14" stroke-linecap="round"/>`;
+        break;
+      case 'trench':
+        s += `<path d="M 166 256 L 200 318 L 234 256 Z" fill="url(#${id}-under)"/>`;
+        s += lapels(jk, 322);
+        for (const y of [348, 384]) s += `<circle cx="178" cy="${y}" r="4.5" fill="${dk(0.4)}"/><circle cx="222" cy="${y}" r="4.5" fill="${dk(0.4)}"/>`;
+        s += `<rect x="96" y="412" width="208" height="22" fill="${dk(0.08)}" stroke="${dk(0.3)}" stroke-width="1.2"/><rect x="186" y="408" width="28" height="30" rx="3" fill="none" stroke="${dk(0.45)}" stroke-width="3"/>`;
+        s += `<path d="M 118 300 L 150 292 L 148 330 M 282 300 L 250 292 L 252 330" stroke="${dk(0.3)}" stroke-width="1.5" fill="none" opacity="0.5"/>`;
+        break;
+      case 'suit':
+        s += `<path d="M 166 256 L 200 334 L 234 256 Z" fill="url(#${id}-under)"/>`;
+        s += lapels(jk, 334);
+        s += `<circle cx="200" cy="362" r="4.5" fill="${dk(0.45)}"/><circle cx="200" cy="398" r="4.5" fill="${dk(0.45)}"/>`;
+        s += `<path d="M 236 330 L 266 330" stroke="${dk(0.35)}" stroke-width="2"/><path d="M 240 330 L 245 319 L 251 327 L 257 318 L 262 330 Z" fill="${ac === '#FFFFFF' ? '#F4F4F6' : ac}"/>`;
+        s += `<path d="M 116 410 L 156 406 M 244 406 L 284 410" stroke="${dk(0.35)}" stroke-width="2"/>`;
+        break;
+      case 'waistcoat':
+        s += `<path d="M 200 262 L 200 476" stroke="${darken(ac, 0.25)}" stroke-width="1.5" opacity="0.6"/>`;
+        for (const side of [-1, 1]) {
+          const X = (x) => 200 + side * (x - 200);
+          s += `<path d="M ${X(110)} 282 Q ${X(138)} 262 ${X(164)} 258 L ${X(201)} 344 L ${X(201)} 476 L ${X(100)} 476 Z" fill="url(#${id}-jacket)" stroke="${dk(0.3)}" stroke-width="1.5"/>`;
+          s += `<path d="M ${X(124)} 384 L ${X(160)} 380" stroke="${dk(0.35)}" stroke-width="2"/>`;
+        }
+        for (const y of [362, 390, 418, 446]) s += `<circle cx="206" cy="${y}" r="3.6" fill="${dk(0.45)}"/>`;
+        break;
+      case 'mandarin':
+        s += `<rect x="190" y="262" width="20" height="214" fill="${lighten(jk, 0.12)}" opacity="0.6"/>`;
+        s += `<path d="M 200 262 L 200 476" stroke="${dk(0.25)}" stroke-width="2" opacity="0.6"/>`;
+        for (const y of [282, 322, 362, 402]) s += `<circle cx="200" cy="${y}" r="3.4" fill="${dk(0.35)}"/>`;
+        break;
+      case 'overshirt':
+        s += `<path d="M 168 256 L 232 256 L 232 476 L 168 476 Z" fill="url(#${id}-under)"/>`;
+        s += `<path d="M 172 254 Q 200 274 228 254" stroke="${darken(ac, 0.25)}" stroke-width="4" fill="none"/>`;
+        s += `<path d="M 168 256 L 168 476 M 232 256 L 232 476" stroke="${dk(0.35)}" stroke-width="3"/>`;
+        for (const y of [306, 346, 386, 426]) s += `<circle cx="160" cy="${y}" r="3.4" fill="${dk(0.4)}"/>`;
+        for (const x of [116, 246]) s += `<path d="M ${x} 300 L ${x + 38} 300 L ${x + 38} 336 Q ${x + 38} 342 ${x + 32} 342 L ${x + 6} 342 Q ${x} 342 ${x} 336 Z" fill="none" stroke="${dk(0.3)}" stroke-width="1.6" opacity="0.7"/>`;
+        break;
+      case 'puffervest':
+        for (const [x, y, w, h] of [[104, 266, 192, 48], [96, 308, 208, 50], [92, 352, 216, 52], [92, 398, 216, 52]]) {
+          s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h / 2}" fill="url(#${id}-band)" stroke="${dk(0.2)}" stroke-opacity="0.35" stroke-width="1.5"/>`;
+        }
+        s += `<path d="M 114 282 Q 132 330 112 400 M 286 282 Q 268 330 288 400" stroke="${dk(0.35)}" stroke-width="3" fill="none" opacity="0.5"/>`;
+        break;
+      case 'overalls':
+        s += `<path d="M 154 296 L 246 296 L 248 404 L 304 404 L 304 476 L 96 476 L 96 404 L 152 404 Z" fill="url(#${id}-jacket)"/>`;
+        s += `<path d="M 162 404 L 162 304 L 238 304 L 238 404" stroke="#F2D27A" stroke-width="1.4" stroke-dasharray="3 3" fill="none" opacity="0.8"/>`;
+        s += `<rect x="178" y="314" width="44" height="32" rx="3" fill="${dk(0.06)}" stroke="#F2D27A" stroke-width="1.3" stroke-dasharray="3 3"/>`;
+        for (const side of [-1, 1]) {
+          const X = (x) => 200 + side * (x - 200);
+          s += `<path d="M ${X(148)} 258 L ${X(162)} 302" stroke="${jk}" stroke-width="16" stroke-linecap="round"/><path d="M ${X(148)} 258 L ${X(162)} 302" stroke="${dk(0.25)}" stroke-width="16" stroke-linecap="round" opacity="0.2"/>`;
+          s += `<circle cx="${X(163)}" cy="302" r="5.5" fill="#C9CBD3" stroke="#8E919B" stroke-width="1"/>`;
+        }
+        break;
+      case 'blouse':
+        for (const x of [150, 170, 230, 250]) s += `<path d="M ${x} 290 Q ${x + 4} 340 ${x - 2} 410" stroke="${dk(0.2)}" stroke-width="1.5" fill="none" opacity="0.35"/>`;
+        break;
+      case 'wrap':
+        s += `<path d="M 166 256 L 200 318 L 234 256 Z" fill="${darken(c.skin, 0.1)}"/>`;
+        s += `<path d="M 234 254 Q 210 300 148 476 L 304 476 L 304 300 Z" fill="${lighten(jk, 0.05)}" opacity="0.55"/>`;
+        s += `<path d="M 166 254 L 200 318" stroke="${dk(0.3)}" stroke-width="2"/><path d="M 234 254 Q 210 300 148 476" stroke="${dk(0.3)}" stroke-width="2.2" fill="none"/>`;
+        s += `<rect x="96" y="414" width="208" height="16" fill="${dk(0.08)}"/><path d="M 132 422 Q 126 446 136 466 M 132 422 Q 142 444 132 469" stroke="${dk(0.08)}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+        break;
+      default: break;
+    }
+    return s;
+  }
 
   function torso(id, c) {
     const jk = c.jacketColor;
@@ -405,8 +673,10 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     let s = '';
     const sx = BODY_SCALE[c.body];
     s += `<g transform="translate(200 0) scale(${sx} 1) translate(-200 0)">`;
-    s += arm(id, c, 118, 29) + arm(id, c, 282, -29);
-    s += `<rect x="96" y="256" width="208" height="220" rx="66" fill="url(#${id}-jacket)"/>`;
+    const giant = c.body === 'giant';
+    // Très grand : bras presque le long du corps, et buste prolongé jusqu'en bas du cadre.
+    s += giant ? arm(id, c, 112, 9) + arm(id, c, 288, -9) : arm(id, c, 118, 29) + arm(id, c, 282, -29);
+    s += `<rect x="96" y="256" width="208" height="220" rx="66" fill="url(#${id}-${UNDER_BODY.includes(c.jacket) ? 'under' : 'jacket'})"/>`;
     if (c.pattern !== 'none' && PATTERNED.includes(c.jacket)) s += `<rect x="96" y="256" width="208" height="220" rx="66" fill="url(#${id}-pat)"/>`;
     if (c.jacket === 'puffer') {
       for (const [x, y, w, h] of [[104, 266, 192, 48], [96, 308, 208, 50], [92, 352, 216, 52], [92, 398, 216, 52]]) {
@@ -446,11 +716,26 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
         s += `<path d="M ${x} 302 L ${x + 54} 302 L ${x + 48} 316 L ${x + 6} 316 Z" fill="${darken(jk, 0.16)}"/>`;
       }
       for (const y of [296, 336, 376, 416]) s += `<circle cx="200" cy="${y}" r="4" fill="#C9CBD3" stroke="#8E919B" stroke-width="1"/>`;
+    } else if (c.jacket !== 'tee') {
+      s += torsoMore(id, c, jk, ac);
     } else { // tee
       s += `<ellipse cx="200" cy="262" rx="36" ry="14" fill="${darken(jk, 0.25)}" opacity="0.5"/>`;
     }
+    if (giant && (c.jacket === 'puffer' || c.jacket === 'puffervest')) {
+      for (let y = 444; y < 256 + GIANT_LEN; y += 46) s += `<rect x="92" y="${y}" width="216" height="52" rx="26" fill="url(#${id}-band)" stroke="${darken(jk, 0.2)}" stroke-opacity="0.35" stroke-width="1.5"/>`;
+    }
     s += '</g>';
-    return s;
+    return giant ? stretchDown(s) : s;
+  }
+
+  /**
+   * Très grand : le buste est dessiné pour s'arrêter vers y = 476 ; on repousse ce bas (et les fermetures,
+   * coutures et pans qui y descendent) jusqu'en bas du cadre.
+   */
+  function stretchDown(svg) {
+    return svg
+      .replace(/height="220" rx="66"/g, `height="${GIANT_LEN}" rx="66"`)
+      .replace(/(^|[ ="])(470|476|480)(?=[ "])/g, (m, p) => `${p}${256 + GIANT_LEN}`);
   }
 
   function collarBack(id, c) {
@@ -460,7 +745,11 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     if (c.jacket === 'puffer') inner = `<rect x="150" y="212" width="100" height="72" rx="32" fill="url(#${id}-band)" stroke="${darken(jk, 0.2)}" stroke-opacity="0.4" stroke-width="1.5"/>`;
     else if (c.jacket === 'hoodie') inner = `<path d="M 122 300 C 100 200 150 110 200 100 C 250 110 300 200 278 300 Z" fill="url(#${id}-jacket)"/><path d="M 138 290 C 124 210 160 130 200 122 C 240 130 276 210 262 290 Z" fill="${darken(jk, 0.35)}" opacity="0.55"/>`;
     else if (c.jacket === 'blazer') inner = `<path d="M 160 232 L 200 250 L 240 232 L 240 262 L 200 280 L 160 262 Z" fill="${c.accent}"/>`;
-    else if (c.jacket === 'shirt' || c.jacket === 'denim' || c.jacket === 'polo') inner = `<path d="M 154 236 L 200 258 L 246 236 L 246 262 L 200 282 L 154 262 Z" fill="${darken(jk, 0.1)}"/>`;
+    else if (c.jacket === 'ziphoodie') inner = `<path d="M 122 300 C 100 200 150 110 200 100 C 250 110 300 200 278 300 Z" fill="url(#${id}-jacket)"/><path d="M 138 290 C 124 210 160 130 200 122 C 240 130 276 210 262 290 Z" fill="${darken(jk, 0.35)}" opacity="0.55"/>`;
+    else if (c.jacket === 'puffervest') inner = `<rect x="150" y="212" width="100" height="72" rx="32" fill="url(#${id}-band)" stroke="${darken(jk, 0.2)}" stroke-opacity="0.4" stroke-width="1.5"/>`;
+    else if (c.jacket === 'suit' || c.jacket === 'waistcoat') inner = `<path d="M 156 236 L 200 256 L 244 236 L 244 262 L 200 282 L 156 262 Z" fill="${darken(c.accent, 0.1)}"/>`;
+    else if (c.jacket === 'trench' || c.jacket === 'leather') inner = `<path d="M 150 232 L 200 252 L 250 232 L 250 262 L 200 282 L 150 262 Z" fill="${darken(jk, 0.15)}"/>`;
+    else if (c.jacket === 'shirt' || c.jacket === 'denim' || c.jacket === 'polo' || c.jacket === 'overshirt') inner = `<path d="M 154 236 L 200 258 L 246 236 L 246 262 L 200 282 L 154 262 Z" fill="${darken(jk, 0.1)}"/>`;
     return inner ? `<g transform="translate(200 0) scale(${sx} 1) translate(-200 0)">${inner}</g>` : '';
   }
 
@@ -483,11 +772,67 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
       s += `<path d="M 158 240 L 200 266 L 242 240" fill="none" stroke="${darken(jk, 0.3)}" stroke-width="1.5" opacity="0.6"/>`;
     } else if (c.jacket === 'polo') {
       s += `<path d="M 164 242 L 200 272 L 236 242 L 244 256 L 200 292 L 156 256 Z" fill="${darken(jk, 0.1)}"/>`;
+    } else if (c.jacket === 'sweatshirt' || c.jacket === 'knit') {
+      s += `<path d="M 164 248 Q 200 276 236 248 L 238 260 Q 200 292 162 260 Z" fill="${darken(jk, 0.12)}"/>${rib('M 163 254 Q 200 284 237 254', darken(jk, 0.3), 10)}`;
+    } else if (c.jacket === 'ziphoodie') {
+      s += `<path d="M 160 248 Q 200 290 240 248 L 240 258 Q 200 300 160 258 Z" fill="${darken(jk, 0.18)}"/>`;
+    } else if (c.jacket === 'quarterzip') {
+      s += `<path d="M 166 214 L 166 254 Q 184 268 197 272 L 197 226 Q 180 224 166 214 Z M 234 214 L 234 254 Q 216 268 203 272 L 203 226 Q 220 224 234 214 Z" fill="url(#${id}-band)" stroke="${darken(jk, 0.25)}" stroke-width="1.2"/>`;
+      s += `<rect x="196" y="250" width="8" height="15" rx="2.5" fill="#C9CBD3" stroke="#8E919B" stroke-width="1"/>`;
+    } else if (c.jacket === 'tracksuit') {
+      s += `<path d="M 170 224 L 170 256 Q 200 274 230 256 L 230 224 Q 200 236 170 224 Z" fill="url(#${id}-band)"/><path d="M 170 225 Q 200 237 230 225" stroke="${c.accent}" stroke-width="3" fill="none"/>`;
+      s += `<line x1="200" y1="234" x2="200" y2="268" stroke="${darken(jk, 0.4)}" stroke-width="2.5" stroke-opacity="0.6"/>`;
+    } else if (c.jacket === 'bomber') {
+      s += `<path d="M 160 242 Q 200 268 240 242 L 244 262 Q 200 292 156 262 Z" fill="${darken(jk, 0.1)}"/>${rib('M 158 252 Q 200 280 242 252', darken(jk, 0.35), 14)}`;
+      s += `<path d="M 158 256 Q 200 284 242 256" stroke="${c.accent}" stroke-width="2.5" fill="none"/>`;
+    } else if (c.jacket === 'mandarin') {
+      s += `<path d="M 170 234 L 170 256 Q 184 264 197 268 L 197 246 Q 182 242 170 234 Z M 230 234 L 230 256 Q 216 264 203 268 L 203 246 Q 218 242 230 234 Z" fill="${lighten(jk, 0.06)}" stroke="${darken(jk, 0.25)}" stroke-width="1.2"/>`;
+    } else if (c.jacket === 'overshirt') {
+      s += `<path d="M 156 236 L 172 258 L 166 292 L 142 256 Z M 244 236 L 228 258 L 234 292 L 258 256 Z" fill="${lighten(jk, 0.06)}" stroke="${darken(jk, 0.3)}" stroke-width="1.4" stroke-linejoin="round"/>`;
+    } else if (c.jacket === 'suit' || c.jacket === 'waistcoat') {
+      const sh = c.accent;
+      s += `<path d="M 162 244 L 200 270 L 186 292 Z M 238 244 L 200 270 L 214 292 Z" fill="${lighten(sh, 0.08)}" stroke="${darken(sh, 0.25)}" stroke-width="1.2" stroke-linejoin="round"/>`;
+    } else if (c.jacket === 'puffervest') {
+      s += `<path d="M 150 250 L 150 256 Q 150 284 178 284 L 222 284 Q 250 284 250 256 L 250 250 Q 200 270 150 250 Z" fill="url(#${id}-band)"/>`;
+      s += `<line x1="200" y1="250" x2="200" y2="470" stroke="${darken(jk, 0.35)}" stroke-width="2.5" stroke-opacity="0.55"/>`;
+      s += `<rect x="195" y="254" width="10" height="16" rx="3" fill="#C9CBD3" stroke="#8E919B" stroke-width="1"/>`;
+    } else if (c.jacket === 'overalls') {
+      s += `<path d="M 170 250 Q 200 270 230 250" stroke="${darken(c.accent, 0.2)}" stroke-width="4" fill="none"/>`;
+    } else if (c.jacket === 'blouse') {
+      const b = darken(jk, 0.06);
+      s += `<path d="M 168 248 Q 200 270 232 248" stroke="${b}" stroke-width="8" fill="none" stroke-linecap="round"/>`;
+      s += `<path d="M 196 270 Q 186 300 178 326 L 190 328 Q 196 300 200 274 Z M 204 270 Q 212 300 216 330 L 228 326 Q 214 300 204 270 Z" fill="${b}" stroke="${darken(jk, 0.3)}" stroke-width="1.2"/>`;
+      s += `<path d="M 198 266 C 178 248 160 262 170 276 C 178 286 192 276 198 268 Z M 202 266 C 222 248 240 262 230 276 C 222 286 208 276 202 268 Z" fill="${b}" stroke="${darken(jk, 0.3)}" stroke-width="1.3"/>`;
+      s += `<ellipse cx="200" cy="268" rx="7" ry="6" fill="${darken(jk, 0.12)}"/>`;
     } else if (c.jacket === 'turtleneck') {
       s += `<path d="M 168 200 L 168 252 Q 200 272 232 252 L 232 200 Q 200 212 168 200 Z" fill="url(#${id}-band)"/>`;
       s += `<path d="M 176 206 L 176 252 M 184 210 L 184 256 M 192 212 L 192 258 M 200 213 L 200 259 M 208 212 L 208 258 M 216 210 L 216 256 M 224 206 L 224 252" stroke="${darken(jk, 0.25)}" stroke-width="1.4" opacity="0.35"/>`;
     }
-    return `<g transform="translate(200 0) scale(${sx} 1) translate(-200 0)">${s}</g>`;
+    const out = `<g transform="translate(200 0) scale(${sx} 1) translate(-200 0)">${s}</g>`;
+    return c.body === 'giant' ? stretchDown(out) : out;
+  }
+
+  /** Gilet de haute visibilité, par-dessus la tenue : deux pans fluo ouverts au centre, bandes réfléchissantes. */
+  function hiVis(id, c) {
+    if (c.vest !== 'hivis') return '';
+    const sx = BODY_SCALE[c.body];
+    const fluo = '#E4F22E', edge = '#AEBB14';
+    let s = `<clipPath id="${id}-torso"><rect x="96" y="256" width="208" height="${c.body === 'giant' ? GIANT_LEN : 220}" rx="66"/></clipPath><g clip-path="url(#${id}-torso)">`;
+    for (const side of [-1, 1]) {
+      const X = (x) => 200 + side * (x - 200);
+      s += `<path d="M ${X(80)} 250 L ${X(158)} 250 L ${X(192)} 316 L ${X(192)} 480 L ${X(80)} 480 Z" fill="${fluo}" stroke="${edge}" stroke-width="2"/>`;
+      s += `<path d="M ${X(80)} 250 L ${X(158)} 250 L ${X(192)} 316 L ${X(192)} 480 L ${X(80)} 480 Z" fill="#fff" opacity="0.12"/>`;
+    }
+    // Bandes réfléchissantes : deux bretelles verticales et deux bandes horizontales.
+    const band = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#D7DBE2" stroke="#A4A9B3" stroke-width="1"/>`;
+    s += band(130, 250, 13, 66) + band(257, 250, 13, 66);
+    for (const y of [316, 360]) {
+      s += band(80, y, 112, 14) + band(208, y, 112, 14);
+      s += `<rect x="80" y="${y + 3}" width="112" height="3" fill="#fff" opacity="0.6"/><rect x="208" y="${y + 3}" width="112" height="3" fill="#fff" opacity="0.6"/>`;
+    }
+    s += '</g>';
+    const out = `<g transform="translate(200 0) scale(${sx} 1) translate(-200 0)">${s}</g>`;
+    return c.body === 'giant' ? stretchDown(out) : out;
   }
 
   /* ----------  Cou : écharpe, collier, cravate…  ---------- */
@@ -521,10 +866,42 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
   const LONG_BACK = 'M 134 160 C 126 92 160 60 200 60 C 240 60 274 92 266 160 L 280 300 C 282 322 118 322 120 300 Z';
   const SHINE = '<path d="M 172 66 C 192 56 226 58 248 78" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.2"/>';
 
+  /** Boucles disposées le long d'un contour : position légèrement décalée d'une boucle à l'autre (déterministe). */
+  function curlRow(points, fill, stroke) {
+    let s = '';
+    points.forEach(([x, y, r], i) => {
+      const jx = ((i * 37) % 7) - 3, jy = ((i * 53) % 5) - 2;
+      s += `<circle cx="${(x + jx).toFixed(1)}" cy="${(y + jy).toFixed(1)}" r="${r}" fill="${fill}"/>`;
+      s += `<path d="M ${(x + jx - r * 0.5).toFixed(1)} ${(y + jy).toFixed(1)} a ${(r * 0.5).toFixed(1)} ${(r * 0.5).toFixed(1)} 0 1 1 ${(r * 0.6).toFixed(1)} ${(r * 0.35).toFixed(1)}" stroke="${stroke}" stroke-width="1.4" fill="none" opacity="0.45" stroke-linecap="round"/>`;
+    });
+    return s;
+  }
+
+  /** Masse de boucles qui s'arrête à la nuque. */
+  function longCurlyBack(fill, stroke) {
+    let s = `<path d="M 126 150 C 116 84 156 46 200 46 C 244 46 284 84 274 150 L 278 212 Q 278 226 262 226 L 138 226 Q 122 226 122 212 Z" fill="${fill}"/>`;
+    const pts = [];
+    for (let a = 180; a <= 360; a += 16) {
+      const r = Math.PI * a / 180;
+      pts.push([200 + 80 * Math.cos(r), 140 + 86 * Math.sin(r), 17]);
+    }
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 4; i++) pts.push([200 + side * (82 + i * 2), 150 + i * 22, 17 + (i % 2) * 2]);
+      pts.push([200 + side * 64, 222, 15]);
+    }
+    return s + curlRow(pts, fill, stroke);
+  }
+
   function hairBack(id, c) {
     if (c.hat === 'hijab') return '';
     const h = c.hair;
     const fill = `url(#${id}-hair)`;
+    if (h === 'longcurly') return longCurlyBack(fill, darken(c.hairColor, 0.35));
+    if (h === 'longwavy') {
+      return `<path d="M 132 158 C 124 92 160 58 200 58 C 240 58 276 92 268 158 C 280 182 266 200 278 222 C 290 246 272 262 284 290 C 290 312 250 318 200 316 C 150 318 110 312 116 290 C 128 262 110 246 122 222 C 134 200 120 182 132 158 Z" fill="${fill}"/>`
+        + `<path d="M 128 200 Q 138 226 126 252 M 272 200 Q 262 226 274 252 M 150 270 Q 158 290 148 306 M 250 270 Q 242 290 252 306" stroke="${darken(c.hairColor, 0.3)}" stroke-width="2" fill="none" opacity="0.45" stroke-linecap="round"/>`;
+    }
+    if (h === 'middlepart') return `<path d="M 130 160 C 124 90 160 58 200 58 C 240 58 276 90 270 160 L 278 248 Q 280 266 262 264 L 138 264 Q 120 266 122 248 Z" fill="${fill}"/>`;
     if (h === 'long' || h === 'longbangs') return `<path d="${LONG_BACK}" fill="${fill}"/>`;
     if (h === 'afro') return `<circle cx="200" cy="132" r="100" fill="${fill}"/>`;
     if (h === 'ponytail') return `<path d="M 250 118 C 300 134 306 222 288 292 C 282 308 262 304 266 286 C 280 232 272 176 244 142 Z" fill="${fill}"/>`;
@@ -578,6 +955,35 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
       for (const [x, y, r] of pts) s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${fill}"/>`;
       return s;
     }
+    if (h === 'longcurly') {
+      const stroke = darken(c.hairColor, 0.35);
+      let s = `<path d="${SKULLCAP_SOFT}" fill="${fill}"/>`;
+      const pts = [];
+      for (let a = 192; a <= 348; a += 13) {
+        const r = Math.PI * a / 180;
+        pts.push([200 + 70 * Math.cos(r), 146 + 76 * Math.sin(r), 14]);
+      }
+      for (let a = 210; a <= 330; a += 24) {
+        const r = Math.PI * a / 180;
+        pts.push([200 + 54 * Math.cos(r), 150 + 60 * Math.sin(r), 13]);
+      }
+      // Boucles qui encadrent le visage, de chaque côté
+      for (const side of [-1, 1]) {
+        for (let i = 0; i < 3; i++) pts.push([200 + side * (66 + i * 2), 150 + i * 20, 11]);
+      }
+      return s + curlRow(pts, fill, stroke);
+    }
+    if (h === 'longwavy') {
+      return `<path d="M 138 150 C 134 100 148 70 168 66 C 178 56 194 58 200 66 C 208 56 226 58 234 68 C 256 72 266 100 262 150 C 262 134 252 120 240 114 C 228 108 216 116 206 112 C 196 108 184 112 176 108 C 160 102 146 114 140 136 Z" fill="${fill}"/>`
+        + `<path d="M 140 132 C 132 160 146 186 136 212 M 260 132 C 268 160 254 186 264 212" stroke="${fill}" stroke-width="10" fill="none" stroke-linecap="round"/>${SHINE}`;
+    }
+    if (h === 'middlepart') {
+      return `<path d="M 200 58 C 164 56 136 82 134 132 L 136 196 Q 140 146 154 120 C 168 98 188 90 200 76 C 212 90 232 98 246 120 Q 260 146 264 196 L 266 132 C 264 82 236 56 200 58 Z" fill="${fill}"/>${part('M 200 60 L 200 78')}${SHINE}`;
+    }
+    if (h === 'slickback') {
+      return `<path d="M 140 140 C 136 88 162 58 200 56 C 240 54 266 86 260 140 C 256 116 248 104 238 100 C 214 90 186 90 162 100 C 152 106 144 120 140 140 Z" fill="${fill}"/>`
+        + `<path d="M 166 98 C 170 80 184 66 204 62 M 188 94 C 192 78 206 68 226 66 M 212 94 C 220 80 234 74 248 80" stroke="${lighten(c.hairColor, 0.25)}" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>`;
+    }
     if (h === 'bangs' || h === 'longbangs') return `<path d="${FRINGE}" fill="${fill}"/>${SHINE}`;
     if (h === 'pixie') {
       return `<path d="M 138 150 C 130 94 154 54 194 52 C 232 48 268 70 267 116 C 267 132 265 142 262 150 C 260 124 250 112 238 110 C 222 108 206 118 196 134 Q 180 142 168 130 C 156 120 146 128 140 146 Z" fill="${fill}"/>${SHINE}`;
@@ -587,6 +993,17 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     }
     if (h === 'mohawk') {
       return `<path d="${SKULLCAP}" fill="${fill}" opacity="0.45"/><path d="M 184 92 L 182 42 L 192 66 L 200 24 L 208 66 L 218 42 L 216 92 Q 200 86 184 92 Z" fill="${fill}"/><path d="M 180 96 C 188 88 212 88 220 96 L 216 112 C 208 106 192 106 184 112 Z" fill="${fill}"/>`;
+    }
+    if (h === 'quiff') {
+      // Petite raie à gauche, cheveux coiffés vers la droite, mèche avant légèrement relevée.
+      const line = darken(c.hairColor, 0.3);
+      return `<path d="M 138 150 C 132 96 156 62 190 58 C 226 54 262 72 266 112 C 267 130 265 142 262 150 C 260 126 252 112 240 106 C 222 98 198 98 180 102 C 162 108 148 122 140 142 Z" fill="${fill}"/>`
+        + `<path d="M 176 88 Q 216 80 258 104 M 178 102 Q 212 96 248 112" stroke="${line}" stroke-width="1.8" fill="none" opacity="0.4" stroke-linecap="round"/>`
+        + `${part('M 166 66 Q 163 86 166 106')}`
+        // Grosse mèche avant : elle part du front et remonte vers l'arrière, en dépassant du haut du crâne.
+        + `<path d="M 170 110 C 163 84 171 56 195 44 C 214 35 238 39 251 54 C 243 52 235 54 231 60 C 241 67 245 82 241 108 Q 206 97 170 110 Z" fill="${fill}" stroke="${line}" stroke-width="1.6" stroke-linejoin="round"/>`
+        + `<path d="M 184 104 C 179 80 187 60 204 50 M 203 100 C 200 78 208 60 225 49 M 223 101 C 225 86 228 74 233 67" stroke="${line}" stroke-width="1.8" fill="none" opacity="0.45" stroke-linecap="round"/>`
+        + `<path d="M 190 96 C 188 78 196 60 212 51" stroke="${lighten(c.hairColor, 0.4)}" stroke-width="3" fill="none" opacity="0.4" stroke-linecap="round"/>`;
     }
     if (h === 'sidepart') {
       return `<path d="${CASQUE}" fill="${fill}"/><path d="M 182 58 C 210 44 250 50 266 92 C 262 78 250 68 236 66 C 220 64 206 72 190 72 Z" fill="${fill}"/>${part('M 176 62 Q 180 88 186 108')}`;
@@ -716,8 +1133,42 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     const beard = oval
       ? `<path d="M 136 150 C 132 232 168 246 200 246 C 232 246 268 232 264 150 C 258 198 236 207 200 207 C 164 207 142 198 136 150 Z" fill="${fill}"/>`
       : `${jawClip}<g clip-path="url(#${id}-jaw)">${headShape(c, ` fill="${fill}"`, 'translate(200 150) scale(1.04 1.3) translate(-200 -150)')}</g>`;
+    // Barbe de 3 jours : poils en pointillé sur les joues, le menton et au-dessus de la lèvre.
+    const ink = luminance(c.hairColor) > 170 ? darken(c.hairColor, 0.35) : c.hairColor;
+    // Poils semés à la main (tirage déterministe) : tailles variées, plus serrés sur la mâchoire,
+    // qui s'éclaircissent vers les pommettes au lieu de s'arrêter sur un bord net.
+    const dot = darken(ink, 0.4);
+    const stubbleOf = (dense) => {
+      let seed = 7;
+      const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+      const step = dense ? 1.9 : 2.4;
+      const sizes = [[], [], []];
+      for (let y = 130; y < 250; y += step) {
+        for (let x = 124; x < 276; x += step) {
+          const px = x + (rnd() - 0.5) * step, py = y + (rnd() - 0.5) * step;
+          // Visage nu : ellipse des joues et du front ; on garde le pourtour avec un fondu.
+          const e = ((px - 200) / 51) ** 2 + ((py - 134) / 72) ** 2;
+          const inMustache = Math.abs(px - 200) < 25 && py > 176 + Math.abs(px - 200) * 0.18 && py < 188.5 - Math.abs(px - 200) * 0.05;
+          let keep = inMustache ? 0.85 : Math.min(1, (e - 1) / 0.22);
+          if (py < 150) keep *= (py - 130) / 20;
+          if (rnd() > keep) continue;
+          const r = rnd();
+          sizes[r < 0.45 ? 0 : r < 0.85 ? 1 : 2].push(`M${px.toFixed(1)} ${py.toFixed(1)}h0`);
+        }
+      }
+      const widths = [1.2, 1.6, 2.1];
+      const ops = [0.8, 0.92, 1];
+      const dots = sizes.map((d, i) => d.length ? `<path d="${d.join('')}" stroke="${dot}" stroke-width="${widths[i]}" stroke-linecap="round" opacity="${ops[i]}"/>` : '').join('');
+      return `${headClip}<g clip-path="url(#${id}-head)">${dots}</g>`;
+    };
+    const stubble = stubbleOf(false);
     switch (c.facialHair) {
-      case 'stubble': return `${headClip}<path clip-path="url(#${id}-head)" d="M 136 165 C 142 226 170 240 200 240 C 230 240 258 226 264 165 C 254 200 232 208 200 208 C 168 208 146 200 136 165 Z" fill="${c.hairColor}" opacity="0.22"/>`;
+      case 'stubble': return stubble;
+      case 'stubblemustache': return stubble + `<path d="M 180 184 Q 200 175 220 184 Q 210 188 200 185.5 Q 190 188 180 184 Z" fill="${fill}" opacity="0.85"/>`;
+      case 'shortbeard': return stubbleOf(true) + mustache;
+      case 'pencil': return `<path d="M 183 184.5 Q 200 178 217 184.5" stroke="${c.hairColor}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+      case 'horseshoe': return `${mustache}<path d="M 181 185 L 180 214 M 219 185 L 220 214" stroke="${fill}" stroke-width="7" stroke-linecap="round"/>`;
+      case 'sideburns': return `${headClip}<g clip-path="url(#${id}-head)"><path d="M 128 128 L 150 128 L 152 188 Q 140 194 128 184 Z M 272 128 L 250 128 L 248 188 Q 260 194 272 184 Z" fill="${fill}"/></g>`;
       case 'mustache': return mustache;
       case 'handlebar': return `<path d="M 176 186 Q 200 172 224 186 Q 212 190 200 186 Q 188 190 176 186 Z" fill="${fill}"/><path d="M 177 186 q -9 -1 -7 -10 M 223 186 q 9 -1 7 -10" stroke="${c.hairColor}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
       case 'beard': return beard + mustache;
@@ -753,9 +1204,29 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
   }
 
   /* ----------  Tête : couvre-chefs, boucles d'oreilles  ---------- */
-  function hat(c) {
-    const hc = c.hatColor;
+  function hat(id, c) {
+    if (c.hatColor !== ITALIA) return hatShape(c, c.hatColor);
+    // Couvre-chef dessiné en blanc, puis bandes du drapeau en produit (multiply) sur sa silhouette : l'ombrage est conservé.
+    const base = hatShape(c, '#F4F4F6');
+    if (!base) return '';
+    return base + `<defs><linearGradient id="${id}-it" gradientUnits="userSpaceOnUse" x1="140" y1="0" x2="260" y2="0">`
+      + `<stop offset="0.333" stop-color="#009246"/><stop offset="0.333" stop-color="#FFFFFF"/><stop offset="0.667" stop-color="#FFFFFF"/><stop offset="0.667" stop-color="#CE2B37"/></linearGradient>`
+      + `<filter id="${id}-itw" x="0" y="0" width="1" height="1"><feFlood flood-color="#fff"/><feComposite operator="in" in2="SourceAlpha"/></filter>`
+      + `<mask id="${id}-itm" maskUnits="userSpaceOnUse" x="0" y="-100" width="400" height="500"><g filter="url(#${id}-itw)">${base}</g></mask></defs>`
+      + `<rect x="0" y="-100" width="400" height="500" fill="url(#${id}-it)" mask="url(#${id}-itm)" style="mix-blend-mode:multiply"/>`;
+  }
+
+  function hatShape(c, hc) {
     switch (c.hat) {
+      case 'chef': {
+        // Toque : bandeau plissé sur le front, haut bouffant en trois lobes.
+        const sh = darken(hc, 0.1);
+        return `<path d="M 146 100 C 112 98 108 46 146 44 C 148 22 192 14 206 32 C 222 14 266 22 262 48 C 298 48 292 100 254 100 Z" fill="${hc}"/>`
+          + `<path d="M 164 100 Q 160 70 168 50 M 186 100 Q 184 68 192 42 M 214 100 Q 216 68 210 42 M 236 100 Q 240 70 232 50" stroke="${sh}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
+          + `<path d="M 130 64 C 132 52 140 46 150 46" stroke="#fff" stroke-width="5" fill="none" opacity="0.4" stroke-linecap="round"/>`
+          + `<path d="M 138 96 L 262 96 L 266 126 Q 200 118 134 126 Z" fill="${darken(hc, 0.05)}" stroke="${darken(hc, 0.16)}" stroke-width="1.5" stroke-linejoin="round"/>`
+          + `<path d="M 158 98 L 156 123 M 179 98 L 178 121 M 200 98 L 200 120 M 221 98 L 222 121 M 242 98 L 244 123" stroke="${darken(hc, 0.14)}" stroke-width="1.5"/>`;
+      }
       case 'cap': {
         const dark = shade(hc, '#3A66C4', '#2E52A3', 0.2);
         return `<path d="M 136 128 C 136 78 164 60 200 60 C 236 60 264 78 264 128 Z" fill="${hc}"/><path d="M 136 128 C 136 78 164 60 200 60 C 236 60 264 78 264 128 Z" fill="#fff" opacity="0.12"/><ellipse cx="200" cy="128" rx="80" ry="13" fill="${dark}"/><ellipse cx="200" cy="126" rx="80" ry="11" fill="${hc}"/><circle cx="200" cy="62" r="5" fill="${dark}"/>`;
@@ -770,6 +1241,26 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
         return `<ellipse cx="206" cy="80" rx="72" ry="34" transform="rotate(-8 206 80)" fill="${hc}"/><ellipse cx="196" cy="70" rx="30" ry="12" transform="rotate(-8 196 70)" fill="#fff" opacity="0.14"/><path d="M 142 112 C 170 98 232 96 262 108" stroke="${darken(hc, 0.2)}" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="208" cy="50" r="4" fill="${darken(hc, 0.2)}"/>`;
       case 'bucket':
         return `<path d="M 142 112 C 142 62 258 62 258 112 Z" fill="${hc}"/><path d="M 118 118 C 150 104 250 104 282 118 C 272 136 128 136 118 118 Z" fill="${darken(hc, 0.12)}"/><path d="M 146 108 Q 200 100 254 108" stroke="${darken(hc, 0.25)}" stroke-width="4" fill="none" opacity="0.6"/>`;
+      case 'hardhat': {
+        // Calotte bombée avec nervure centrale, visière qui fait le tour, reflet.
+        const dark = darken(hc, 0.18);
+        return `<path d="M 134 120 C 132 66 164 44 200 44 C 236 44 268 66 266 120 Z" fill="${hc}"/>`
+          + `<path d="M 186 46 C 184 70 184 96 186 120 L 214 120 C 216 96 216 70 214 46 Q 200 43 186 46 Z" fill="${lighten(hc, 0.12)}" stroke="${dark}" stroke-width="1.4"/>`
+          + `<path d="M 150 96 C 152 72 168 56 184 52" stroke="#fff" stroke-width="6" fill="none" opacity="0.28" stroke-linecap="round"/>`
+          + `<path d="M 114 122 C 140 110 260 110 286 122 C 280 132 120 132 114 122 Z" fill="${dark}"/>`
+          + `<path d="M 118 120 C 144 110 256 110 282 120" stroke="${hc}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+      }
+      case 'bikehelmet': {
+        // Coque profilée avec aérations, liseré sombre en bas, sangles qui passent devant les oreilles jusque sous le menton.
+        const dark = darken(hc, 0.25);
+        const vent = '#2B2D33';
+        return `<path d="M 141 124 L 143 174 L 172 220 Q 200 232 228 220 L 257 174 L 259 124" stroke="#2B2D33" stroke-width="3" fill="none" stroke-linejoin="round" opacity="0.85"/>`
+          + `<rect x="137" y="170" width="10" height="8" rx="2" fill="#2B2D33"/><rect x="253" y="170" width="10" height="8" rx="2" fill="#2B2D33"/>`
+          + `<path d="M 128 126 C 124 72 158 40 202 40 C 248 40 280 72 272 126 Q 262 118 248 120 L 152 120 Q 138 118 128 126 Z" fill="${hc}"/>`
+          + `<path d="M 128 126 Q 138 118 152 120 L 248 120 Q 262 118 272 126 L 270 116 Q 260 108 246 110 L 154 110 Q 140 108 130 116 Z" fill="${dark}"/>`
+          + `<path d="M 192 50 Q 200 47 208 50 L 206 92 Q 200 95 194 92 Z M 166 58 Q 174 52 180 54 L 176 94 Q 170 96 166 92 Z M 234 58 Q 226 52 220 54 L 224 94 Q 230 96 234 92 Z M 146 76 Q 152 68 156 70 L 154 100 Q 148 102 146 98 Z M 254 76 Q 248 68 244 70 L 246 100 Q 252 102 254 98 Z" fill="${vent}" opacity="0.75"/>`
+          + `<path d="M 150 64 C 166 50 186 44 200 44" stroke="#fff" stroke-width="5" fill="none" opacity="0.3" stroke-linecap="round"/>`;
+      }
       case 'headband':
         return `<path d="M 136 112 C 160 92 240 92 264 112" stroke="${hc}" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M 150 104 Q 200 92 250 104" stroke="#fff" stroke-width="3" fill="none" opacity="0.2"/>`;
       default: return '';
@@ -834,23 +1325,24 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     const parts = [defs(id, c)];
     if (opts.background !== false) parts.push(background(id, c));
     parts.push(
-      '<g transform="translate(200 56) scale(1.18) translate(-200 -52)">',
+      `<g transform="translate(200 ${c.body === 'giant' ? 56 - GIANT_LIFT : c.body === 'tiny' ? 56 + TINY_DROP : 56}) scale(1.18) translate(-200 -52)">`,
       `<ellipse cx="200" cy="300" rx="150" ry="60" fill="#000" opacity="0.12" filter="url(#${id}-soft)"/>`,
       torso(id, c),
       collarBack(id, c),
-      fitHair(c, hairBack(id, c)),
+      fitHair(c, saltPepper(id, c, hairBack(id, c))),
       hijabBack(c),
       neck(c),
       collarFront(id, c),
+      hiVis(id, c),
       neckwear(c),
       head(id, c),
-      facialHair(id, c),
+      saltPepper(id, c, facialHair(id, c)),
       face(id, c, ex),
-      fitHair(c, hairFront(id, c)),
+      fitHair(c, saltPepper(id, c, hairFront(id, c))),
       hijabFront(c),
       glasses(c),
       earrings(c),
-      hat(c),
+      hat(id, c),
       '</g>',
     );
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" preserveAspectRatio="xMidYMid slice"${sizeAttr} class="avatar-svg${opts.className ? ' ' + opts.className : ''}" role="img" aria-label="Avatar">${parts.join('\n')}</svg>`;
@@ -901,6 +1393,6 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
 
   return {
     SCHEMA, GROUPS, DEFAULT_CONFIG, EXPRESSIONS, EXPRESSION_LABELS, EMOTIONS, BLOB_FACES,
-    normalizeConfig, randomConfig, renderAvatar, renderBlob, lighten, darken, mix, optionColor,
+    SALT_PEPPER, ITALIA, normalizeConfig, randomConfig, renderAvatar, renderBlob, lighten, darken, mix, optionColor,
   };
 }));

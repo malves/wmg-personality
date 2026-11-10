@@ -160,6 +160,8 @@ select.input { appearance: auto; }
 .swatch { position: relative; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px var(--line); cursor: pointer; background: var(--c); transition: transform 140ms ease, box-shadow 140ms ease; }
 .swatch:hover { transform: scale(1.08); }
 .swatch.is-active { box-shadow: 0 0 0 3px var(--primary); }
+.swatch.is-italia { background: linear-gradient(90deg, #009246 0 33.3%, #FFFFFF 33.3% 66.6%, #CE2B37 66.6%); }
+.swatch.is-saltpepper { background: radial-gradient(circle at 30% 30%, #F2F2F4 0 1.5px, transparent 2px) 0 0 / 7px 7px, radial-gradient(circle at 70% 60%, #C9CACD 0 1.2px, transparent 1.8px) 3px 2px / 9px 9px, var(--c); }
 .swatch.is-custom { display: block; background: conic-gradient(#F07A6E, #F6C644, #7CD39A, #6EC1F5, #C9B6F2, #F07A6E); }
 .swatch.is-custom.is-active { background: var(--c); }
 .swatch.is-custom::after { content: '+'; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 18px; font-weight: 800; line-height: 1; text-shadow: 0 1px 2px rgba(0, 0, 0, .35); }

@@ -30,6 +30,8 @@
 
   function thumb(field, value) {
     const c = { ...cfg, [field.key]: value };
+    /* Les vignettes zoomées visent la tête à sa place normale : un personnage tout petit ou très grand la ferait sortir du cadre. */
+    if (field.zoom && (c.body === 'tiny' || c.body === 'giant')) c.body = 'medium';
     const bg = field.group === 'bg';
     return K.renderAvatar(c, { expression: 'neutral', background: bg, size: 72, viewBox: field.zoom });
   }
@@ -62,8 +64,11 @@
     b.type = 'button';
     b.className = 'swatch' + (active ? ' is-active' : '');
     b.style.setProperty('--c', color);
-    b.title = color;
-    b.setAttribute('aria-label', `${field.label} ${color}`);
+    const name = color === K.SALT_PEPPER ? 'Poivre et sel' : color === K.ITALIA ? 'Italie' : color;
+    if (color === K.SALT_PEPPER) b.classList.add('is-saltpepper');
+    if (color === K.ITALIA) b.classList.add('is-italia');
+    b.title = name;
+    b.setAttribute('aria-label', `${field.label} ${name}`);
     b.dataset.value = color;
     return b;
   }

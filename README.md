@@ -75,6 +75,31 @@ L'application écoute sur le port `3020` de l'hôte. Les données (base SQLite +
 
 Sauvegarde : copiez le volume `disc-data` ; il contient tous les comptes, résultats et textes modifiés.
 
+### Production (derrière Traefik)
+
+`docker-compose.prod.yml` lance l'application sans publier de port, sur le réseau externe `traefik_reverse_proxy`, sous le nom `personality` et sur le port `3001` (cible du routeur Traefik `http://personality:3001`). Traefik gère le HTTPS ; le flux temps réel (SSE) passe sans réglage particulier.
+
+Le fichier `.env` à côté du compose doit contenir `SESSION_SECRET` (`openssl rand -hex 32`), `ADMIN_EMAIL` et `ADMIN_PASSWORD`. `PORT`, `TRUST_PROXY`, `BASE_URL` et `DATA_DIR` sont fixés par le compose.
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml logs -f
+```
+
+Sauvegarde : Admin → Réglages → « Télécharger l'export (.db) », ou une copie du volume `personality-data`.
+
+#### Publication de l'image (`deploy.sh`)
+
+L'image est publiée sur `ghcr.io/malves/wmg-personality` ; le compose de production utilise le tag `IMAGE_TAG` du `.env` (défaut `latest`).
+
+```bash
+./deploy.sh 1.1.0          # build linux/amd64 + push sur GHCR
+./deploy.sh 1.1.0 --prod   # idem, puis sur le serveur : IMAGE_TAG=1.1.0 dans le .env, pull, up -d
+./deploy.sh list           # tags locaux et distants
+```
+
+Serveur cible : `PROD_HOST` (défaut `srv03`), `PROD_DIR` (défaut `/production/apps/wmg-personality`), `PROD_COMPOSE` (sinon détecté parmi `compose.yml`, `docker-compose.prod.yml`, `docker-compose.yml`). Connexion GHCR une fois : `echo "$GITHUB_TOKEN" | docker login ghcr.io -u malves --password-stdin`.
+
 ## Variables d'environnement
 
 | Variable | Rôle | Défaut |

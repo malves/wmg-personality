@@ -57,7 +57,6 @@ function answersMap(attemptId) {
 function baseState(req, settings) {
   return {
     allowSkip: settings.allow_skip,
-    consentText: settings.consent_text,
     avatar: AvatarKit.normalizeConfig(parseJSON(req.user.avatar_json, null)),
     firstName: req.user.first_name,
     blockCount: db.prepare('SELECT COUNT(*) AS n FROM blocks WHERE active = 1').get().n,

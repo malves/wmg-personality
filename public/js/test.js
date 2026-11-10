@@ -1,5 +1,5 @@
 /**
- * Déroulé du test côté client : intro → consentement → blocs (le plus / le moins) → analyse → résultat.
+ * Déroulé du test côté client : intro → blocs (le plus / le moins) → analyse → résultat.
  * S'appuie sur l'API JSON /api/test/* et sur AvatarKit pour l'avatar et les blobs.
  */
 (function () {
@@ -12,15 +12,10 @@
   let blocks = [];
   let answers = {};
   let idx = 0;
-  let currentEmotion = null;
   let saving = false;
   let picked = { most: null, least: null };
-  let lastEmotion = null;
   let timers = [];
   let lastStep = null;
-
-  /* Visage du petit blob qui marque un choix : sourire pour « le plus », moue pour « le moins ». */
-  const MARK_FACE = '<svg viewBox="0 0 32 32"><ellipse cx="11.5" cy="13" rx="2" ry="2.6"/><ellipse cx="20.5" cy="13" rx="2" ry="2.6"/><path class="f-smile" d="M10.5 19.5c2.8 3.4 8.2 3.4 11 0"/><path class="f-frown" d="M10.5 22.5c2.8-3.4 8.2-3.4 11 0"/></svg>';
 
   /* ----------  Utilitaires  ---------- */
   function api(url, body) {
@@ -56,11 +51,6 @@
     const screen = document.getElementById('screen');
     if (screen) screen.scrollTop = 0;
   }
-  function pickEmotion() {
-    const list = K.EMOTIONS.filter((e) => e !== lastEmotion);
-    lastEmotion = list[Math.floor(Math.random() * list.length)];
-    return lastEmotion;
-  }
   function viewfinder(expression, emotion) {
     return `<div class="viewfinder${emotion ? ' has-tint' : ''}" id="vf" style="--tint:${emotion ? emotion.color : '#fff'};--tint-ink:${emotion ? K.darken(emotion.color, 0.58) : '#1C1D22'}">
       <div class="vf-avatar" id="vf-avatar">${K.renderAvatar(state.avatar, { expression })}</div>
@@ -68,20 +58,11 @@
       <div class="vf-name">${esc(state.firstName)}</div>
       <svg class="vf-target" viewBox="0 0 32 16" aria-hidden="true"><circle cx="8" cy="8" r="5" fill="none" stroke="#fff" stroke-width="3"/><path d="M 13 7 L 29 5" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
       <i class="vf-corner tl"></i><i class="vf-corner tr"></i><i class="vf-corner bl"></i><i class="vf-corner br"></i>
-      ${emotion ? `<div class="vf-label"><small>Je détecte</small><strong>${esc(emotion.label)}</strong></div>` : ''}
     </div>`;
   }
   function setExpression(expression) {
     const el = document.getElementById('vf-avatar');
     if (el) el.innerHTML = K.renderAvatar(state.avatar, { expression });
-  }
-  /** Change d'expression avec un léger rebond, pour que l'avatar réagisse au clic. */
-  function react(expression) {
-    setExpression(expression);
-    const el = document.getElementById('vf-avatar');
-    if (el && motionOK() && el.animate) {
-      el.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.025)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'ease-out' });
-    }
   }
   function peek(a, b) {
     return `<div class="peek" aria-hidden="true">${K.renderBlob({ color: a.color, face: a.face, className: 'pk-1' })}${K.renderBlob({ color: b.color, face: b.face, className: 'pk-2' })}</div>`;
@@ -121,33 +102,20 @@
     let f = 0;
     const cycle = () => { f = (f + 1) % faces.length; setExpression(faces[f]); later(cycle, 2200); };
     later(cycle, 2200);
-    document.getElementById('go').addEventListener('click', screenConsent);
+    document.getElementById('go').addEventListener('click', startTest);
   }
 
-  function screenConsent() {
-    const paragraphs = String(state.consentText || '').split(/\n\s*\n/).map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
-    render(`
-      <h2 class="screen-title">Avant de commencer</h2>
-      <div class="consent-box">${paragraphs || '<p>Aucun texte de consentement.</p>'}</div>
-      <label class="check"><input type="checkbox" id="consent"> J'ai lu et j'accepte.</label>
-      <div class="test-footer" style="margin-top:16px">
-        <button class="link-btn" id="back">Retour</button>
-        <button class="btn btn-primary" id="start" disabled>Je commence</button>
-      </div>`);
-    const cb = document.getElementById('consent');
-    const start = document.getElementById('start');
-    cb.addEventListener('change', () => { start.disabled = !cb.checked; });
-    document.getElementById('back').addEventListener('click', screenIntro);
-    start.addEventListener('click', () => {
-      start.disabled = true;
-      api('/api/test/start', { consent: true }).then((s) => {
-        state = { ...state, ...s };
-        blocks = s.blocks || [];
-        answers = s.answers || {};
-        idx = 0;
-        screenBlock();
-      }).catch((e) => { alert(e.message); start.disabled = false; });
-    });
+  /* Lance le test directement (pas d'écran de consentement : usage interne ponctuel). */
+  function startTest() {
+    const go = document.getElementById('go');
+    if (go) go.disabled = true;
+    api('/api/test/start', { consent: true }).then((s) => {
+      state = { ...state, ...s };
+      blocks = s.blocks || [];
+      answers = s.answers || {};
+      idx = 0;
+      screenBlock();
+    }).catch((e) => { alert(e.message); if (go) go.disabled = false; });
   }
 
   function firstUnanswered() {
@@ -155,16 +123,14 @@
     return i < 0 ? blocks.length : i;
   }
 
-  /* Enveloppe stable du test : le viseur et le pied de page restent en place d'un bloc à l'autre. */
-  function blockShell(emotion, peekA, peekB) {
+  /* Enveloppe stable du test : progression, compteur et pied de page restent en place d'un bloc à l'autre. */
+  function blockShell() {
     return `
       <div class="q-progress" aria-hidden="true"><i id="q-bar"></i></div>
-      <div id="peek-wrap">${peek(peekA, peekB)}</div>
-      ${viewfinder(emotion.expression, emotion)}
+      <div class="q-head"><span class="q-count" id="q-count"></span></div>
       <div class="block-panel" id="block-panel"></div>
       <div class="test-footer test-footer--block">
         <button class="link-btn" id="back">Retour</button>
-        <div class="pill" id="q-count"></div>
         <div class="footer-next">
           ${state.allowSkip ? '<button class="link-btn" id="skip">Passer</button>' : ''}
           <button class="btn btn-primary btn-next" id="next" disabled><span id="next-label">Suivant</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
@@ -209,27 +175,14 @@
 
   function showBlock(dir) {
     const block = blocks[idx];
-    const emotion = pickEmotion();
-    currentEmotion = emotion;
     lastStep = null;
     const prev = answers[block.id];
     picked = { most: prev && !prev.skipped ? prev.mostItemId : null, least: prev && !prev.skipped ? prev.leastItemId : null };
-    const peekA = K.EMOTIONS[(K.EMOTIONS.indexOf(emotion) + 3) % K.EMOTIONS.length];
-    const peekB = K.EMOTIONS[(K.EMOTIONS.indexOf(emotion) + 6) % K.EMOTIONS.length];
 
-    if (document.getElementById('block-panel')) {
-      const vf = document.getElementById('vf');
-      vf.style.setProperty('--tint', emotion.color);
-      vf.style.setProperty('--tint-ink', K.darken(emotion.color, 0.58));
-      vf.querySelector('.vf-label strong').textContent = emotion.label;
-      replay(vf.querySelector('.vf-label'), 'is-swapping');
-      document.getElementById('peek-wrap').innerHTML = peek(peekA, peekB);
-      react(emotion.expression);
-    } else {
-      render(blockShell(emotion, peekA, peekB));
+    if (!document.getElementById('block-panel')) {
+      render(blockShell());
       bindFooter();
     }
-    replay(document.getElementById('vf'), 'is-scanning');
 
     const panel = document.getElementById('block-panel');
     panel.classList.remove('is-leaving');
@@ -237,7 +190,7 @@
     panel.innerHTML = `
       <p class="q-text" id="q-text"></p>
       <div class="choices" id="choices">
-        ${block.items.map((it, i) => `<button type="button" class="choice" style="--i:${i}" data-id="${it.id}"><span class="mark" aria-hidden="true">${MARK_FACE}</span><span class="choice-text">${esc(it.text)}</span><span class="tag"></span></button>`).join('')}
+        ${block.items.map((it, i) => `<button type="button" class="choice" style="--i:${i}" data-id="${it.id}"><span class="mark" aria-hidden="true"></span><span class="choice-text">${esc(it.text)}</span><span class="tag"></span></button>`).join('')}
       </div>`;
     document.getElementById('choices').addEventListener('click', onChoice);
     document.getElementById('q-bar').style.transform = `scaleX(${(idx + 1) / blocks.length})`;
@@ -263,7 +216,7 @@
       const q = document.getElementById('q-text');
       if (step === 'most') q.innerHTML = '<b>Ce qui te ressemble</b> <span class="q-step is-most">le plus</span>';
       else if (step === 'least') q.innerHTML = '<b>Ce qui te ressemble</b> <span class="q-step is-least">le moins</span>';
-      else q.innerHTML = '<span class="q-done"><b>C\'est noté !</b> Reclique pour modifier.</span>';
+      else q.innerHTML = '<span class="q-done"><b>C\'est noté !</b> <small>Reclique pour modifier.</small></span>';
     }
     document.querySelectorAll('.choice').forEach((el) => {
       const id = Number(el.dataset.id);
@@ -288,19 +241,10 @@
     const btn = ev.target.closest('.choice');
     if (!btn || saving) return;
     const id = Number(btn.dataset.id);
-    if (id === picked.most) {
-      picked.most = null;
-      react(currentEmotion.expression);
-    } else if (id === picked.least) {
-      picked.least = null;
-      react(currentEmotion.expression);
-    } else if (picked.most == null) {
-      picked.most = id;
-      react('joy');
-    } else {
-      picked.least = id;
-      react('doubt');
-    }
+    if (id === picked.most) picked.most = null;
+    else if (id === picked.least) picked.least = null;
+    else if (picked.most == null) picked.most = id;
+    else picked.least = id;
     paint();
   }
 

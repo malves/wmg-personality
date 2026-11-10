@@ -39,7 +39,6 @@ router.post('/', (req, res) => {
     setSetting('shuffle_blocks', !!b.shuffle_blocks);
     setSetting('shuffle_items', !!b.shuffle_items);
     setSetting('allow_skip', !!b.allow_skip);
-    setSetting('consent_text', String(b.consent_text || '').trim());
     if (req.file) {
       removeLogoFile(getSettings().logo_path);
       setSetting('logo_path', `/uploads/${req.file.filename}`);

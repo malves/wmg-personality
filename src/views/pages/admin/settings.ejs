@@ -17,12 +17,7 @@
     <label class="check"><input type="checkbox" name="allow_skip" value="1" <%= s.allow_skip ? 'checked' : '' %>> <span>Autoriser le bouton « Passer » <span class="muted small">(un bloc passé n'est pas compté, le score est moins fiable)</span></span></label>
   </section>
 </div>
-<section class="panel">
-  <h2>Texte de consentement</h2>
-  <p class="muted small">Affiché avant le début du test ; le collaborateur doit cocher « J'accepte ». La date d'acceptation est enregistrée.</p>
-  <textarea class="input" name="consent_text" rows="8"><%= s.consent_text %></textarea>
-  <div class="actions"><button class="btn btn-primary" type="submit">Enregistrer les réglages</button></div>
-</section>
+<div class="actions"><button class="btn btn-primary" type="submit">Enregistrer les réglages</button></div>
 </form>
 
 <div class="grid-2">

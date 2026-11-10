@@ -1,0 +1,30 @@
+services:
+  personality:
+    build: .
+    image: ghcr.io/malves/wmg-personality:${IMAGE_TAG:-latest}   # IMAGE_TAG dans le .env (géré par ./deploy.sh --prod)
+    container_name: personality
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3001              # port visé par traefik/conf/dynamic/wmg-personality.yml
+      - DATA_DIR=/app/data
+      - TRUST_PROXY=1          # derrière Traefik : cookie secure, IP réelle
+      - BASE_URL=https://personality.kleekr.com
+      - TZ=Europe/Paris
+    volumes:
+      - personality-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - traefik_reverse_proxy
+
+volumes:
+  personality-data:
+
+networks:
+  traefik_reverse_proxy:
+    external: true

@@ -128,7 +128,6 @@
 .dk-choice.is-least { background: #FEF0EE; box-shadow: inset 0 0 0 .14cqw #F07A6E; }
 .dk-choice.is-least .dk-tick { background: #EE6B5E; box-shadow: 0 0 .9cqw #EE6B5E; }
 .dk-choices.is-done .dk-choice:not(.is-most):not(.is-least) { opacity: .55; }
-.dk-choices.is-fast .dk-choice, .dk-choices.is-fast .dk-tick { transition: none; }
 .dk-choices.is-fast .dk-tag { visibility: hidden; }
 .dk-tag { flex: none; font-size: 1.15cqw; font-weight: 800; white-space: nowrap; }
 .dk-choice.is-most .dk-tag { color: #23784A; }
@@ -174,3 +173,52 @@
 .dk-remote span { min-width: 136px; padding: 0 8px; font-size: 13px; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, .78); }
 .dk-remote button:focus-visible { outline: 2px solid #9ED8FF; outline-offset: 1px; }
 @media (hover: hover) and (pointer: fine) { .dk-remote button:hover { background: rgba(255, 255, 255, .16); } }
+
+/* La méthode : pourquoi des mots plutôt que des questions */
+.dk-left.is-method { width: 41cqw; }
+.dk-left.is-method .dk-say { margin-top: 2cqh; }
+.dk-steps { display: grid; gap: 1.5cqh; margin: 3.6cqh 0 0; padding: 0; list-style: none; }
+.dk-steps li { display: flex; align-items: flex-start; gap: .9cqw; font-size: 1.75cqw; font-weight: 600; line-height: 1.25; }
+.dk-steps i { flex: none; display: grid; place-items: center; width: 2.4cqw; height: 2.4cqw; border-radius: 50%; background: var(--ink); color: #fff; font-size: 1.2cqw; font-style: normal; font-weight: 800; }
+.dk-compare { position: absolute; left: 52cqw; top: 50cqh; width: 42cqw; translate: 0 -50%; display: grid; gap: 2.6cqh; }
+.dk-cmp { padding: 1.6cqw 1.9cqw; border-radius: 2cqw; background: #fff; box-shadow: 0 1cqw 3cqw rgba(30, 40, 60, .12); }
+.dk-cmp small { display: block; font-size: 1.15cqw; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--soft); }
+.dk-cmp-q { margin: 1cqh 0 0; font-size: 2.1cqw; font-weight: 700; }
+.dk-scale { display: flex; gap: .7cqw; margin-top: 1.6cqh; }
+.dk-scale span { display: grid; place-items: center; width: 3.4cqw; height: 3.4cqw; border-radius: 50%; box-shadow: inset 0 0 0 .13cqw #DDDFE6; font-size: 1.4cqw; font-weight: 700; color: var(--soft); }
+.dk-scale span.is-on { background: var(--ink); box-shadow: none; color: #fff; animation: dkTick 420ms var(--spring) backwards; animation-delay: 2500ms; }
+@keyframes dkTick { from { background: transparent; color: var(--soft); transform: scale(.7); } }
+.dk-cmp.is-classic .dk-cmp-verdict { color: #C23A30; }
+.dk-cmp-verdict { margin: 1.6cqh 0 0; font-size: 1.55cqw; font-weight: 700; }
+.dk-cmp.is-disc { box-shadow: inset 0 0 0 .16cqw #7CD39A, 0 1cqw 3cqw rgba(30, 40, 60, .12); }
+.dk-cmp.is-disc .dk-cmp-verdict { color: #23784A; }
+.dk-words { display: grid; grid-template-columns: 1fr 1fr; gap: .8cqw; margin-top: 1.4cqh; }
+.dk-words span { display: flex; align-items: center; gap: .8cqw; padding: .9cqw 1.1cqw; border-radius: 1.2cqw; box-shadow: inset 0 0 0 .1cqw #E6E8ED; font-size: 1.6cqw; font-weight: 700; }
+.dk-words i { flex: none; width: 1.5cqw; height: 1.5cqw; border-radius: 50%; background: var(--c); }
+
+/* Vos avatars : les visages en grand, éparpillés comme sur la carte */
+.dk-gallery { position: absolute; inset: 0; pointer-events: none; }
+.dk-pal { position: absolute; translate: -50% -50%; padding: 0; border: 0; background: none; font: inherit; cursor: zoom-in; pointer-events: auto; -webkit-tap-highlight-color: transparent; animation: dkDrift 6s ease-in-out infinite alternate; animation-delay: var(--f); }
+.dk-pal .lv-ring.dk-face { padding: .35cqw; box-shadow: 0 .8cqw 2cqw rgba(30, 40, 60, .18); }
+@keyframes dkDrift { to { transform: translateY(-1.2cqh); } }
+@media (prefers-reduced-motion: reduce) { .dk-pal { animation: none; } }
+@media (hover: hover) and (pointer: fine) {
+  .dk-pal .lv-ring.dk-face { transition: scale 220ms cubic-bezier(.23, 1, .32, 1), box-shadow 220ms ease; }
+  .dk-pal:hover .lv-ring.dk-face { scale: 1.06; box-shadow: 0 1.2cqw 2.8cqw rgba(30, 40, 60, .26); }
+}
+.dk-pal:focus-visible { outline: .25cqw solid #3E9BEA; outline-offset: .4cqw; border-radius: 50%; }
+.dk-pal.is-lifted { visibility: hidden; }
+/* Zoom sur un avatar : fond flouté, l'avatar grandit depuis sa place */
+.dk-zoom { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; cursor: zoom-out; background: rgba(240, 246, 255, 0); -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); transition: background-color 420ms ease, backdrop-filter 420ms ease, -webkit-backdrop-filter 420ms ease; }
+.dk-zoom.is-on { background: rgba(240, 246, 255, .42); -webkit-backdrop-filter: blur(1.4cqw); backdrop-filter: blur(1.4cqw); }
+.dk-zoom-card { width: 58cqh; height: 58cqh; border-radius: 50%; cursor: pointer; perspective: 160cqh; will-change: transform; outline: none; }
+.dk-flip { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 900ms var(--spring); }
+.dk-zoom.is-flipped .dk-flip { transform: rotateY(180deg); }
+.dk-zoom.is-closing .dk-flip { transition-duration: 480ms; transition-timing-function: cubic-bezier(.23, 1, .32, 1); }
+.dk-side { position: absolute; inset: 0; border-radius: 50%; -webkit-backface-visibility: hidden; backface-visibility: hidden; box-shadow: 0 2.4cqw 6cqw rgba(30, 40, 60, .28); }
+.dk-side.lv-ring { --p: 1; --ring: #fff; width: 100%; height: 100%; padding: .6cqw; }
+.dk-side.is-back { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6cqh; padding: 0 6cqh; transform: rotateY(180deg); background: radial-gradient(circle at 34% 26%, #A6DCFF, #3E9BEA 78%); box-shadow: inset 0 0 0 .6cqw #fff, 0 2.4cqw 6cqw rgba(30, 40, 60, .28); color: #fff; text-align: center; }
+.dk-side.is-back small { font-size: 3.4cqh; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+.dk-side.is-back b { max-width: 100%; font-size: min(11cqh, calc(78cqh / var(--len))); font-weight: 800; line-height: 1.05; letter-spacing: -.03em; overflow-wrap: anywhere; text-shadow: 0 .3cqh 1.2cqh rgba(20, 60, 120, .25); }
+.dk-zoom.is-flipped .dk-zoom-card { cursor: zoom-out; }
+@media (prefers-reduced-motion: reduce) { .dk-flip { transition: none; } }

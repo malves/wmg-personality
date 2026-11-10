@@ -19,6 +19,7 @@
   const CORNERS = { D: at(7, 14, 0.15), I: at(93, 14, 0.15), S: at(93, 86, 0.15), C: at(7, 86, 0.15) };
   const HUB = { D: at(68, 50, 0.05), I: at(70, 50, 0.05), S: at(70, 52, 0.05), C: at(68, 52, 0.05) };
   const QUADRANTS = { D: at(54.5, 27, 0.2), I: at(81.5, 27, 0.2), S: at(81.5, 73, 0.2), C: at(54.5, 73, 0.2) };
+  const PERCH = { D: at(84, 7, 0.06), I: at(89, 6, 0.07), S: at(94, 7, 0.065), C: at(79, 6.5, 0.055) };
   const PEEK = { D: at(62, 11, 0.1), I: at(70, 8, 0.12), S: at(79, 8, 0.11), C: at(87, 11, 0.09) };
 
   /** La boule présentée occupe la droite, les trois autres patientent en bas à gauche. */
@@ -39,6 +40,14 @@
       eyebrow: 'Avant de commencer',
       say: ['On va parler de vous.', 'Enfin, de votre façon de fonctionner ensemble.'],
       blobs: FOOT,
+    },
+    {
+      id: 'faces', label: 'Vos avatars', view: 'faces', sky: '#E6F2FF',
+      eyebrow: 'Regardez bien',
+      title: 'Vous vous reconnaissez\u00a0?',
+      say: ['Ces avatars, c\'est vous.', 'Chacun a été fait à votre image.'],
+      empty: 'Les avatars apparaîtront ici dès qu\'ils auront été créés.',
+      blobs: PERCH,
     },
     {
       id: 'printer', label: 'L\'imprimante', view: 'scene', sky: '#FFE9B8',
@@ -84,6 +93,20 @@
         { at: 2800, blobs: { D: at(45, 62, 0.15), I: at(52, 48, 0.32), S: at(60, 60, 0.18), C: at(42, 52, 0.17) } },
         { at: 5600, blobs: { D: at(58, 52, 0.14), I: at(43, 62, 0.16), S: at(48, 50, 0.3), C: at(58, 64, 0.2) } },
       ],
+    },
+    {
+      id: 'method', label: 'La méthode', view: 'method', sky: '#FFF1D6',
+      eyebrow: 'Pourquoi il n\'y a pas de questions',
+      title: 'Pas de questions. Des mots.',
+      say: ['Êtes-vous organisé\u00a0?', 'Tout le monde répond oui.'],
+      steps: [
+        'Chaque série montre 4 mots, un par couleur.',
+        'Aucun mot n\'est meilleur qu\'un autre\u00a0: pas de bonne réponse à viser.',
+        'Vous gardez celui qui vous ressemble le plus, vous écartez celui qui vous ressemble le moins.',
+      ],
+      classic: { label: 'Un questionnaire classique', question: 'Êtes-vous organisé(e)\u00a0?', verdict: 'Tout le monde coche 5. On n\'apprend rien.' },
+      disc: { label: 'Le DISC', words: { D: 'Direct(e)', I: 'Sociable', S: 'Fidèle', C: 'Précis(e)' }, verdict: 'Il faut choisir\u00a0: c\'est là que votre style apparaît.' },
+      blobs: PERCH,
     },
     {
       id: 'survey', label: 'Le test', view: 'survey', sky: '#D6F3E2',
