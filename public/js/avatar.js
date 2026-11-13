@@ -58,7 +58,7 @@
     { key: 'details', label: 'Détails', group: 'face', type: 'choice', zoom: 'face',
       options: [{ v: 'none', l: 'Aucun' }, { v: 'freckles', l: 'Taches de rousseur' }, { v: 'beautymark', l: 'Grain de beauté' }, { v: 'blush', l: 'Joues rosées' }, { v: 'nosering', l: 'Piercing' }] },
     { key: 'facialHair', label: 'Pilosité', group: 'face', type: 'choice', zoom: 'head',
-      options: [{ v: 'none', l: 'Aucune' }, { v: 'stubble', l: 'Barbe de 3 jours' }, { v: 'mustache', l: 'Moustache' }, { v: 'handlebar', l: 'Moustache en guidon' },
+      options: [{ v: 'none', l: 'Aucune' }, { v: 'stubble', l: 'Barbe de 3 jours' }, { v: 'stubblenolip', l: 'Barbe de 3 jours sans moustache' },{ v: 'mustache', l: 'Moustache' }, { v: 'handlebar', l: 'Moustache en guidon' },
                 { v: 'goatee', l: 'Bouc' }, { v: 'soulpatch', l: 'Mouche' }, { v: 'chinstrap', l: 'Collier' }, { v: 'beard', l: 'Barbe' }, { v: 'fullbeard', l: 'Barbe longue' },
                 { v: 'stubblemustache', l: 'Barbe de 3 jours et moustache' }, { v: 'shortbeard', l: 'Barbe courte' }, { v: 'pencil', l: 'Moustache fine' },
                 { v: 'horseshoe', l: 'Fer à cheval' }, { v: 'sideburns', l: 'Favoris' }] },
@@ -68,7 +68,7 @@
                 { v: 'bald', l: 'Chauve' }, { v: 'pixie', l: 'Pixie' }, { v: 'bangs', l: 'Frange' }, { v: 'spiky', l: 'Hérissée' }, { v: 'mohawk', l: 'Crête' },
                 { v: 'bob', l: 'Carré' }, { v: 'long', l: 'Longue' }, { v: 'longbangs', l: 'Longue avec frange' },
                 { v: 'longcurly', l: 'Bouclée mi-longue' }, { v: 'longwavy', l: 'Longue ondulée' }, { v: 'middlepart', l: 'Mi-longue raie au milieu' }, { v: 'slickback', l: 'Plaquée en arrière' }, { v: 'ponytail', l: 'Queue de cheval' },
-                { v: 'bun', l: 'Chignon' }, { v: 'doublebun', l: 'Deux chignons' }, { v: 'braids', l: 'Tresses' }, { v: 'locs', l: 'Locks' }, { v: 'afro', l: 'Afro' }] },
+                { v: 'bun', l: 'Chignon' }, { v: 'doublebun', l: 'Deux chignons' }, { v: 'braids', l: 'Tresses' }, { v: 'locs', l: 'Locks' }, { v: 'locstop', l: 'Locks courtes' }, { v: 'afro', l: 'Afro' }] },
     { key: 'hairColor', label: 'Couleur des cheveux', group: 'hair', type: 'color', options: HAIR_COLORS },
 
     { key: 'eyes', label: 'Yeux', group: 'eyes', type: 'choice', zoom: 'face',
@@ -1009,7 +1009,7 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
       return `<path d="${CASQUE}" fill="${fill}"/><path d="M 182 58 C 210 44 250 50 266 92 C 262 78 250 68 236 66 C 220 64 206 72 190 72 Z" fill="${fill}"/>${part('M 176 62 Q 180 88 186 108')}`;
     }
     if (h === 'braids' || h === 'doublebun') return `<path d="${CASQUE}" fill="${fill}"/>${part('M 200 56 L 200 108')}`;
-    if (h === 'locs') {
+    if (h === 'locs' || h === 'locstop') {
       return `<path d="${CASQUE}" fill="${fill}"/><path d="M 160 72 Q 170 90 166 112 M 184 60 Q 190 84 188 108 M 212 58 Q 214 84 214 110 M 238 70 Q 244 92 246 112" stroke="${darken(c.hairColor, 0.3)}" stroke-width="2" fill="none" opacity="0.5"/>`;
     }
     // short, long, bun, ponytail, bob : casque court avec mèche balayée
@@ -1138,7 +1138,7 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     // Poils semés à la main (tirage déterministe) : tailles variées, plus serrés sur la mâchoire,
     // qui s'éclaircissent vers les pommettes au lieu de s'arrêter sur un bord net.
     const dot = darken(ink, 0.4);
-    const stubbleOf = (dense) => {
+    const stubbleOf = (dense, lip = true) => {
       let seed = 7;
       const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
       const step = dense ? 1.9 : 2.4;
@@ -1149,7 +1149,7 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
           // Visage nu : ellipse des joues et du front ; on garde le pourtour avec un fondu.
           const e = ((px - 200) / 51) ** 2 + ((py - 134) / 72) ** 2;
           const inMustache = Math.abs(px - 200) < 25 && py > 176 + Math.abs(px - 200) * 0.18 && py < 188.5 - Math.abs(px - 200) * 0.05;
-          let keep = inMustache ? 0.85 : Math.min(1, (e - 1) / 0.22);
+          let keep = inMustache ? (lip ? 0.85 : 0) : Math.min(1, (e - 1) / 0.22);
           if (py < 150) keep *= (py - 130) / 20;
           if (rnd() > keep) continue;
           const r = rnd();
@@ -1164,6 +1164,7 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     const stubble = stubbleOf(false);
     switch (c.facialHair) {
       case 'stubble': return stubble;
+      case 'stubblenolip': return stubbleOf(false, false);
       case 'stubblemustache': return stubble + `<path d="M 180 184 Q 200 175 220 184 Q 210 188 200 185.5 Q 190 188 180 184 Z" fill="${fill}" opacity="0.85"/>`;
       case 'shortbeard': return stubbleOf(true) + mustache;
       case 'pencil': return `<path d="M 183 184.5 Q 200 178 217 184.5" stroke="${c.hairColor}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
