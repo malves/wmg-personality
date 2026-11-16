@@ -19,7 +19,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const {
-  db, getUserById, getAttemptByUser, parseJSON, getSettings,
+  db, getUserById, getAttemptByUser, parseJSON, getSettings, newInviteToken, INVITE_TTL_MS,
 } = require('../db');
 const disc = require('../disc');
 const live = require('../live');
@@ -63,6 +63,11 @@ function resultOf(user) {
   };
 }
 
+/** Adresse publique du site, celle des Réglages : c'est elle que les collaborateurs ouvriront. */
+function baseUrl() {
+  return (getSettings().base_url || `http://localhost:${process.env.PORT || 3020}`).replace(/\/+$/, '');
+}
+
 function listCollaborators() {
   const rows = db.prepare(`
     SELECT u.id, u.first_name, u.last_name, u.email, u.role, u.show_in_team,
@@ -71,7 +76,7 @@ function listCollaborators() {
     FROM users u LEFT JOIN attempts a ON a.user_id = u.id
     ORDER BY u.role DESC, u.first_name COLLATE NOCASE, u.last_name COLLATE NOCASE
   `).all();
-  const base = (getSettings().base_url || `http://localhost:${process.env.PORT || 3020}`).replace(/\/+$/, '');
+  const base = baseUrl();
   return rows.map((u) => ({
     id: u.id,
     firstName: u.first_name,
@@ -83,9 +88,50 @@ function listCollaborators() {
     testStatus: u.status || 'none',
     profileKey: u.status === 'completed' ? u.profile_key : null,
     completedAt: u.completed_at || null,
-    inviteLink: (!u.active && u.invite_token && u.invite_expires_at > Date.now())
+    // Un lien généré pour un compte déjà actif reste utilisable : il sert à choisir un nouveau mot de passe.
+    inviteLink: (u.role !== 'admin' && u.invite_token && u.invite_expires_at > Date.now())
       ? `${base}/invite/${u.invite_token}` : null,
   }));
+}
+
+/* ----------  Liens d'invitation (écriture)  ---------- */
+const stmtCollaborators = db.prepare("SELECT * FROM users WHERE role != 'admin' ORDER BY first_name COLLATE NOCASE, last_name COLLATE NOCASE");
+const stmtSetInvite = db.prepare('UPDATE users SET invite_token = ?, invite_expires_at = ? WHERE id = ?');
+
+/**
+ * Génère un lien d'invitation neuf pour tous les collaborateurs, ou seulement pour les ids donnés.
+ * Un lien d'invitation donne la main sur le compte : les comptes admin sont donc exclus, pour que le
+ * jeton MCP ne permette jamais de prendre un accès administrateur.
+ * Tout ou rien : si un id est refusé, aucun lien n'est modifié.
+ */
+function createInviteLinks(ids) {
+  let users;
+  if (ids && ids.length) {
+    const unique = [...new Set(ids)];
+    users = unique.map((id) => getUserById(id));
+    const unknown = unique.filter((id, i) => !users[i]);
+    if (unknown.length) throw new Error(`Collaborateur introuvable : id ${unknown.join(', ')}.`);
+    const admins = users.filter((u) => u.role === 'admin');
+    if (admins.length) throw new Error(`Compte admin exclu (id ${admins.map((u) => u.id).join(', ')}) : son lien se génère depuis la page admin.`);
+  } else {
+    users = stmtCollaborators.all();
+  }
+  const base = baseUrl();
+  const expiresAt = Date.now() + INVITE_TTL_MS;
+  const links = users.map((u) => ({ user: u, token: newInviteToken() }));
+  db.transaction(() => { links.forEach(({ user, token }) => stmtSetInvite.run(token, expiresAt, user.id)); })();
+  return {
+    count: links.length,
+    expiresAt: new Date(expiresAt).toISOString(),
+    links: links.map(({ user, token }) => ({
+      id: user.id,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      email: user.email,
+      active: !!user.password_hash,
+      inviteLink: `${base}/invite/${token}`,
+    })),
+  };
 }
 
 function compareUsers(idA, idB) {
@@ -136,13 +182,23 @@ const asError = (e) => ({ isError: true, content: [{ type: 'text', text: `Erreur
 
 /** Un serveur neuf par requête : recommandé pour le mode « stateless » du transport HTTP. */
 function buildServer({ McpServer, z }) {
-  const server = new McpServer({ name: 'wmg-personality', version: '1.2.0' });
+  const server = new McpServer({ name: 'wmg-personality', version: '1.3.0' });
 
   server.registerTool('list_collaborators', {
     title: 'Lister les collaborateurs',
-    description: "Liste tous les comptes : état du compte, avancement du test, profil, et lien d'invitation encore valide le cas échéant.",
+    description: "Liste tous les comptes : état du compte, avancement du test, profil, et lien d'invitation encore valide le cas échéant (jamais pour un compte admin).",
     inputSchema: {},
   }, async () => { try { return asJson(listCollaborators()); } catch (e) { return asError(e); } });
+
+  server.registerTool('create_invite_links', {
+    title: "Générer des liens d'invitation",
+    description: "Génère un lien d'invitation neuf (valable 14 jours) pour tous les collaborateurs, ou seulement pour ceux dont l'id est donné dans `ids`. "
+      + "Chaque lien est personnel : il permet à son destinataire de choisir son mot de passe, y compris si son compte est déjà actif (le mot de passe actuel reste valable tant que le lien n'est pas utilisé). "
+      + "Tout lien généré auparavant pour ces personnes cesse de fonctionner. Les comptes admin sont exclus. À ne transmettre qu'à la personne concernée, en message privé.",
+    inputSchema: {
+      ids: z.array(z.number().int().positive()).optional().describe('Identifiants des collaborateurs concernés. Absent ou vide : tous les collaborateurs.'),
+    },
+  }, async ({ ids }) => { try { return asJson(createInviteLinks(ids)); } catch (e) { return asError(e); } });
 
   server.registerTool('get_result', {
     title: "Résultat d'un collaborateur",

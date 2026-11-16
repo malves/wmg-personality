@@ -229,13 +229,18 @@ select.input { appearance: auto; }
 .lv-stage { position: relative; flex: 1; min-height: 0; overflow: hidden; border-radius: 26px; border: 1px solid var(--line); container-type: inline-size; background: radial-gradient(72% 72% at 0 0, rgba(240, 122, 110, .32), transparent 74%), radial-gradient(72% 72% at 100% 0, rgba(246, 198, 68, .34), transparent 74%), radial-gradient(72% 72% at 100% 100%, rgba(124, 211, 154, .34), transparent 74%), radial-gradient(72% 72% at 0 100%, rgba(110, 193, 245, .34), transparent 74%), #fff; }
 .lv-hulls { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .lv-hulls path { opacity: 0; pointer-events: visiblePainted; cursor: pointer; stroke-linejoin: round; stroke-linecap: round; transition: fill 700ms ease, stroke 700ms ease; }
+/* Les deux axes du DISC, en filigrane derrière les avatars */
+.lv-axes { position: absolute; inset: 0; pointer-events: none; }
+.lv-axes i { position: absolute; border-radius: 99px; background: rgba(28, 29, 34, .15); }
+.lv-axes .is-v { left: 50%; top: var(--lv-top, 14px); bottom: 12px; width: 2px; margin-left: -1px; }
+.lv-axes .is-h { top: 50%; left: 12px; right: 12px; height: 2px; margin-top: -1px; }
 .lv-zone { position: absolute; z-index: 2; display: flex; align-items: center; gap: clamp(6px, 1cqw, 16px); padding: clamp(8px, 1.1cqw, 20px) clamp(12px, 1.7cqw, 30px); background: var(--c); color: #1C1D22; box-shadow: 0 6px 18px rgba(30, 40, 60, .14); pointer-events: none; }
 .lv-zone .blob-svg { flex: none; width: clamp(38px, 5cqw, 92px); height: clamp(38px, 5cqw, 92px); }
 .lv-zone b { display: block; font-size: clamp(17px, 2.5cqw, 42px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; }
 .lv-zone span { display: block; max-width: 21ch; margin-top: 2px; font-size: clamp(11.5px, 1.05cqw, 18px); font-weight: 500; line-height: 1.25; color: rgba(28, 29, 34, .8); }
 .lv-zone.tl { top: 0; left: 0; border-bottom-right-radius: 26px; } .lv-zone.tr { top: 0; right: 0; flex-direction: row-reverse; text-align: right; border-bottom-left-radius: 26px; } .lv-zone.bl { bottom: 0; left: 0; border-top-right-radius: 26px; } .lv-zone.br { bottom: 0; right: 0; flex-direction: row-reverse; text-align: right; border-top-left-radius: 26px; }
 @container (max-width: 640px) { .lv-zone span { display: none; } }
-.lv-empty { position: absolute; left: 50%; top: 50%; max-width: 300px; transform: translate(-50%, -50%); text-align: center; font-size: 16px; font-weight: 600; color: var(--text-2); }
+.lv-empty { position: absolute; left: 50%; top: 50%; z-index: 1; max-width: 300px; padding: 10px 16px; border-radius: 16px; background: rgba(255, 255, 255, .9); transform: translate(-50%, -50%); text-align: center; font-size: 16px; font-weight: 600; color: var(--text-2); }
 .lv-empty[hidden], .lv-tray[hidden] { display: none; }
 
 .lv-node { padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; position: absolute; left: 0; top: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; width: calc(var(--r) * 2); will-change: transform; animation: lvIn 320ms var(--ease-out); }

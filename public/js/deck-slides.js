@@ -21,6 +21,8 @@
   const QUADRANTS = { D: at(54.5, 27, 0.2), I: at(81.5, 27, 0.2), S: at(81.5, 73, 0.2), C: at(54.5, 73, 0.2) };
   const PERCH = { D: at(84, 7, 0.06), I: at(89, 6, 0.07), S: at(94, 7, 0.065), C: at(79, 6.5, 0.055) };
   const PEEK = { D: at(62, 11, 0.1), I: at(70, 8, 0.12), S: at(79, 8, 0.11), C: at(87, 11, 0.09) };
+  /* Avant « Bonjour », les boules n'ont pas encore été présentées : elles attendent sous la scène, réduites à rien. */
+  const OFFSTAGE = { D: at(8, 100, 0), I: at(36, 100, 0), S: at(65, 100, 0), C: at(92, 100, 0) };
 
   /** La boule présentée occupe la droite, les trois autres patientent en bas à gauche. */
   function spotlight(dim) {
@@ -36,6 +38,43 @@
 
   const SLIDES = [
     {
+      // Page de couverture : reste affichée pendant que tout le monde s'installe.
+      id: 'cover', label: 'Couverture', view: 'cover', sky: '#BFE1FF',
+      eyebrow: 'Welcoming Group',
+      title: 'Séminaire 2026',
+      chips: ['Villiers-le-Mahieu', '17 & 18 novembre'],
+      wait: 'Installez-vous, on commence dans un instant.',
+      blobs: OFFSTAGE,
+    },
+    {
+      // Programme du séminaire (mardi 17 novembre 2026) : sert à expliquer l'organisation de la journée avant de commencer.
+      id: 'programme', label: 'Le programme', view: 'programme', sky: '#DDEBFF',
+      eyebrow: 'Mardi 17 novembre',
+      title: 'Le programme de la journée',
+      parts: [
+        {
+          label: 'La journée',
+          items: [
+            { time: '09h00', title: 'Départ en bus', text: 'Rendez-vous à Porte Maillot' },
+            { time: '10h15', title: 'Arrivée & accueil gourmand', text: 'Accueil du château · café, thé, gourmandises' },
+            { time: '11h00', title: 'Qui êtes-vous, vraiment\u00a0?', text: 'Activité autour d\'un test de personnalité', now: 'On y est' },
+            { time: '12h30', title: 'Déjeuner buffet', text: 'La Ferme' },
+            { time: '14h00', title: 'Activité de groupe', text: 'Animation surprise' },
+            { time: '16h00', title: 'Remise des clés & quartier libre', text: 'Activités du domaine · goûter à 16h30' },
+          ],
+        },
+        {
+          label: 'La soirée',
+          items: [
+            { time: '19h00', title: 'Apéritif', text: 'Bar ouvert' },
+            { time: '20h00', title: 'Dîner à l\'assiette', text: 'La Ferme' },
+            { time: 'Ensuite', title: 'Soirée, puis after', text: 'Jusqu\'à 1h30, puis jusqu\'au bout de la nuit' },
+          ],
+        },
+      ],
+      blobs: OFFSTAGE,
+    },
+    {
       id: 'hello', label: 'Bonjour', view: 'hello', sky: '#BFE1FF',
       eyebrow: 'Avant de commencer',
       say: ['On va parler de vous.', 'Enfin, de votre façon de fonctionner ensemble.'],
@@ -50,6 +89,20 @@
       blobs: PERCH,
     },
     {
+      // Avant les exemples : dire en une diapositive ce qu'est le DISC et à quoi il sert.
+      id: 'intro', label: 'C\'est quoi ?', view: 'intro', sky: '#E9E4FF',
+      eyebrow: 'En deux mots',
+      title: 'La méthode DISC, c\'est quoi ?',
+      say: ['Un test de personnalité très connu,', 'surtout dans le monde professionnel.'],
+      lead: 'Il sert à trois choses',
+      cards: [
+        { title: 'Se comprendre', text: 'Mettre des mots sur nos réactions et notre façon de fonctionner.' },
+        { title: 'Comprendre l\'autre', text: 'Voir que chacun réagit à sa manière, sans bonne ni mauvaise façon de faire.' },
+        { title: 'Mieux communiquer', text: 'Adapter sa façon de s\'adresser à chacun, selon son profil.' },
+      ],
+      blobs: { D: at(41, 87, 0.09), I: at(47, 86, 0.1), S: at(53, 86, 0.1), C: at(59, 87, 0.09) },
+    },
+    {
       id: 'printer', label: 'L\'imprimante', view: 'scene', sky: '#FFE9B8',
       eyebrow: 'Même situation, quatre réactions',
       say: ['L\'imprimante lâche', 'cinq minutes avant la réunion.'],
@@ -59,6 +112,7 @@
         S: 'Pas de panique, je reste avec toi.',
         C: 'Erreur E-42. Page 86 du manuel.',
       },
+      tags: { D: 'Le direct', I: 'L\'enthousiaste', S: 'Le calme', C: 'Le rigoureux' },
       blobs: ROW,
     },
     {
@@ -66,7 +120,6 @@
       eyebrow: 'Le DISC',
       title: 'Personne n\'a tort.',
       say: ['On ne fonctionne juste pas pareil.', 'Le DISC met des mots sur ces différences.'],
-      note: 'Un modèle imaginé en 1928 par William Marston, qui a aussi créé Wonder Woman.',
       blobs: CORNERS,
     },
     {

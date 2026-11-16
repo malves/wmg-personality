@@ -83,6 +83,14 @@
     n.answered = p.answered;
   }
 
+  /* ----------  Axes  ---------- */
+  /* Les deux axes de la diapositive « Deux questions », en filigrane derrière les avatars, sans libellés. */
+  const axes = document.createElement('div');
+  axes.className = 'lv-axes';
+  axes.setAttribute('aria-hidden', 'true');
+  ['v', 'h'].forEach((dir) => { axes.appendChild(document.createElement('i')).className = `is-${dir}`; });
+  stage.prepend(axes);
+
   /* ----------  Disposition  ---------- */
   function measureZones() {
     zones = [...stage.querySelectorAll('.lv-zone')].map((z) => ({
@@ -90,6 +98,7 @@
     }));
     const hud = stage.querySelector('.lv-hud');
     if (hud) TOP = hud.offsetTop + hud.offsetHeight + 8;
+    stage.style.setProperty('--lv-top', `${TOP}px`);
   }
 
   /** Écarte un disque des quatre coins, où sont posés les noms des dimensions. */

@@ -222,3 +222,45 @@
 .dk-side.is-back b { max-width: 100%; font-size: min(11cqh, calc(78cqh / var(--len))); font-weight: 800; line-height: 1.05; letter-spacing: -.03em; overflow-wrap: anywhere; text-shadow: 0 .3cqh 1.2cqh rgba(20, 60, 120, .25); }
 .dk-zoom.is-flipped .dk-zoom-card { cursor: zoom-out; }
 @media (prefers-reduced-motion: reduce) { .dk-flip { transition: none; } }
+
+/* Le programme de la journée : deux cartes, la journée et la soirée, une ligne par rendez-vous */
+.dk-center.is-prog { top: 5cqh; }
+.dk-prog { position: absolute; left: 6cqw; right: 6cqw; top: 23.5cqh; display: grid; grid-template-columns: 1.22fr 1fr; align-items: stretch; gap: 2.4cqw; }
+.dk-prog-part { display: flex; flex-direction: column; padding: 1.3cqw 1.5cqw 1.1cqw; border-radius: 2cqw; background: rgba(255, 255, 255, .9); box-shadow: 0 1cqw 3cqw rgba(30, 40, 60, .12); }
+.dk-prog-part header { display: flex; align-items: center; justify-content: space-between; gap: 1cqw; margin-bottom: .7cqw; }
+.dk-prog-part header b { font-size: 1.2cqw; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--soft); }
+.dk-prog-part header span { padding: .2cqw .9cqw; border-radius: 99px; background: #F3E9C9; color: #7A5C00; font-size: 1.15cqw; font-weight: 700; white-space: nowrap; }
+/* Les deux cartes ont la même hauteur : les rendez-vous de la soirée, moins nombreux, se répartissent sur toute la carte. */
+.dk-prog-part ol { flex: 1; display: grid; grid-auto-rows: 1fr; gap: .3cqw; margin: 0; padding: 0; list-style: none; }
+.dk-prog-part li { display: flex; align-items: center; gap: 1.2cqw; padding: .62cqw .9cqw; border-radius: 1.2cqw; }
+.dk-prog-part time { flex: none; width: 6.6cqw; padding: .3cqw 0; border-radius: 99px; background: #EEF0F4; font-size: 1.5cqw; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
+.dk-prog-part li div { flex: 1; min-width: 0; }
+.dk-prog-part li b { display: block; font-size: 1.75cqw; font-weight: 700; line-height: 1.15; letter-spacing: -.012em; }
+.dk-prog-part li span { display: block; margin-top: .1cqw; font-size: 1.25cqw; font-weight: 500; line-height: 1.2; color: var(--soft); }
+.dk-prog-part li.is-now { background: #EAF4FF; box-shadow: inset 0 0 0 .14cqw #6EC1F5; }
+.dk-prog-part li.is-now time { background: #3E9BEA; color: #fff; }
+.dk-prog-part li em { flex: none; padding: .25cqw .9cqw; border-radius: 99px; background: #1C1D22; color: #fff; font-size: 1.1cqw; font-style: normal; font-weight: 700; white-space: nowrap; }
+
+/* Couverture : affichée pendant l'installation, avec des halos qui dérivent lentement derrière le titre */
+.dk-glows { position: absolute; inset: 0; }
+.dk-glows i { position: absolute; left: var(--x); top: var(--y); width: var(--s); aspect-ratio: 1; margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); border-radius: 50%; background: var(--c); filter: blur(4.5cqw); opacity: .8; animation: dkFade 1400ms ease backwards, dkGlow var(--t) ease-in-out infinite alternate; animation-delay: var(--d), 0ms; }
+@keyframes dkGlow { to { transform: translate(var(--dx), var(--dy)) scale(1.14); } }
+.dk-center.is-mid.is-cover { top: 45cqh; width: 90cqw; }
+.dk-center.is-cover .dk-eyebrow { margin-bottom: 1cqh; font-size: 2.1cqw; letter-spacing: .14em; color: #5F626C; }
+.dk-title.is-cover { font-size: 10.4cqw; line-height: 1; letter-spacing: -.045em; }
+.dk-center.is-cover .dk-points { margin-top: 3.6cqh; }
+.dk-center.is-cover .dk-points li { padding: .7cqw 1.6cqw; font-size: 2cqw; }
+.dk-center.is-wait { bottom: 11cqh; }
+.dk-center.is-wait .dk-wave { margin-top: 0; }
+.dk-wait { margin: 1.6cqh 0 0; font-size: 1.9cqw; font-weight: 600; color: #5F626C; }
+@media (prefers-reduced-motion: reduce) { .dk-glows i { animation: none; } }
+
+/* Le DISC, c'est quoi ? : trois cartes, une par usage */
+.dk-lead { position: absolute; left: 0; right: 0; top: 34.5cqh; margin: 0; font-size: 1.3cqw; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; text-align: center; color: var(--soft); }
+.dk-cards { position: absolute; left: 8cqw; right: 8cqw; top: 40cqh; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin: 0; padding: 0; list-style: none; }
+.dk-cards li { padding: 1.7cqw 1.9cqw 2cqw; border-radius: 2cqw; background: rgba(255, 255, 255, .92); box-shadow: 0 1cqw 3cqw rgba(30, 40, 60, .12); }
+.dk-cards i { display: grid; place-items: center; width: 2.8cqw; height: 2.8cqw; border-radius: 50%; background: var(--ink); color: #fff; font-size: 1.4cqw; font-style: normal; font-weight: 800; }
+.dk-cards b { display: block; margin-top: 1.1cqw; font-size: 2.3cqw; font-weight: 800; line-height: 1.12; letter-spacing: -.02em; }
+.dk-cards span { display: block; margin-top: .6cqw; font-size: 1.6cqw; font-weight: 500; line-height: 1.3; color: #5F626C; }
+.dk-layer[data-view="intro"] .dk-say { margin-top: 1.6cqh; }
+.dk-nick { position: absolute; left: var(--x); top: 89.5cqh; translate: -50% 0; padding: .35cqw 1.2cqw; border-radius: 99px; background: #fff; box-shadow: 0 .3cqw 1cqw rgba(30, 40, 60, .1), inset 0 0 0 .14cqw color-mix(in srgb, var(--c) 72%, #fff); font-size: 1.6cqw; font-weight: 700; white-space: nowrap; }

@@ -64,8 +64,8 @@
                 { v: 'horseshoe', l: 'Fer à cheval' }, { v: 'sideburns', l: 'Favoris' }] },
 
     { key: 'hair', label: 'Coiffure', group: 'hair', type: 'choice', zoom: 'head',
-      options: [{ v: 'short', l: 'Courte' }, { v: 'sidepart', l: 'Raie sur le côté' }, { v: 'quiff', l: 'Raie et mèche relevée' }, { v: 'wavy', l: 'Ondulée' }, { v: 'curly', l: 'Bouclée' }, { v: 'buzz', l: 'Rasée' },
-                { v: 'bald', l: 'Chauve' }, { v: 'pixie', l: 'Pixie' }, { v: 'bangs', l: 'Frange' }, { v: 'spiky', l: 'Hérissée' }, { v: 'mohawk', l: 'Crête' },
+      options: [{ v: 'short', l: 'Courte' }, { v: 'sidepart', l: 'Raie sur le côté' }, { v: 'quiff', l: 'Raie et mèche relevée' }, { v: 'sidequiff', l: 'Raie et grande mèche relevée' }, { v: 'wavy', l: 'Ondulée' }, { v: 'curly', l: 'Bouclée' }, { v: 'buzz', l: 'Rasée' },
+                { v: 'bald', l: 'Chauve' }, { v: 'balding', l: 'Dégarnie' }, { v: 'pixie', l: 'Pixie' }, { v: 'bangs', l: 'Frange' }, { v: 'spiky', l: 'Hérissée' }, { v: 'mohawk', l: 'Crête' },
                 { v: 'bob', l: 'Carré' }, { v: 'long', l: 'Longue' }, { v: 'longbangs', l: 'Longue avec frange' },
                 { v: 'longcurly', l: 'Bouclée mi-longue' }, { v: 'longwavy', l: 'Longue ondulée' }, { v: 'middlepart', l: 'Mi-longue raie au milieu' }, { v: 'slickback', l: 'Plaquée en arrière' }, { v: 'ponytail', l: 'Queue de cheval' },
                 { v: 'bun', l: 'Chignon' }, { v: 'doublebun', l: 'Deux chignons' }, { v: 'braids', l: 'Tresses' }, { v: 'locs', l: 'Locks' }, { v: 'locstop', l: 'Locks courtes' }, { v: 'afro', l: 'Afro' }] },
@@ -101,7 +101,7 @@
 
     { key: 'hat', label: 'Tête', group: 'extras', type: 'choice', zoom: 'head',
       options: [{ v: 'none', l: 'Rien' }, { v: 'cap', l: 'Casquette' }, { v: 'beanie', l: 'Bonnet' }, { v: 'beret', l: 'Béret' }, { v: 'bucket', l: 'Bob' },
-                { v: 'headband', l: 'Bandeau' }, { v: 'headphones', l: 'Casque audio' }, { v: 'hardhat', l: 'Casque de chantier' }, { v: 'bikehelmet', l: 'Casque de vélo' }, { v: 'chef', l: 'Toque de cuisinier' }, { v: 'hijab', l: 'Hijab', rare: true }] },
+                { v: 'headband', l: 'Bandeau' }, { v: 'headphones', l: 'Casque audio' }, { v: 'earpiece', l: 'Oreillette' }, { v: 'hardhat', l: 'Casque de chantier' }, { v: 'bikehelmet', l: 'Casque de vélo' }, { v: 'chef', l: 'Toque de cuisinier' }, { v: 'hijab', l: 'Hijab', rare: true }] },
     { key: 'hatColor', label: 'Couleur', group: 'extras', type: 'color', options: HAT_COLORS },
     { key: 'earrings', label: 'Boucles d\'oreilles', group: 'extras', type: 'choice', zoom: 'face',
       options: [{ v: 'none', l: 'Aucune' }, { v: 'studs', l: 'Puces' }, { v: 'hoops', l: 'Créoles' }, { v: 'drops', l: 'Pendantes' }] },
@@ -114,7 +114,7 @@
 
     { key: 'background', label: 'Fond', group: 'bg', type: 'choice',
       options: [{ v: 'city', l: 'Ville' }, { v: 'office', l: 'Bureau' }, { v: 'park', l: 'Parc' }, { v: 'beach', l: 'Plage' },
-                { v: 'mountains', l: 'Montagne' }, { v: 'road', l: 'Route' }, { v: 'station', l: 'Gare' }, { v: 'japan', l: 'Japon' }, { v: 'pisa', l: 'Tour de Pise' }, { v: 'night', l: 'Nuit' }, { v: 'blobs', l: 'Bulles' }, { v: 'plain', l: 'Uni' }] },
+                { v: 'mountains', l: 'Montagne' }, { v: 'road', l: 'Route' }, { v: 'station', l: 'Gare' }, { v: 'japan', l: 'Japon' }, { v: 'pisa', l: 'Tour de Pise' }, { v: 'church', l: 'Église' }, { v: 'hospital', l: 'Hôpital' }, { v: 'night', l: 'Nuit' }, { v: 'blobs', l: 'Bulles' }, { v: 'plain', l: 'Uni' }] },
     { key: 'backgroundColor', label: 'Couleur du fond', group: 'bg', type: 'color', options: BG_COLORS },
   ];
 
@@ -208,6 +208,7 @@
   const EXPRESSIONS = {
     neutral:  { browIn: 0,   browOut: 0,  eyes: 'open',   mouth: 'smile',   pupil: 0 },
     joy:      { browIn: -3,  browOut: -2, eyes: 'happy',  mouth: 'grin',    pupil: 0, cheeks: true },
+    beam:     { browIn: -4,  browOut: -4, eyes: 'open',   mouth: 'beam',    pupil: 0, cheeks: true },
     surprise: { browIn: -10, browOut: -8, eyes: 'wide',   mouth: 'o',       pupil: 0 },
     stress:   { browIn: -7,  browOut: 3,  eyes: 'open',   mouth: 'wavy',    pupil: 0, sweat: true },
     fear:     { browIn: -9,  browOut: 2,  eyes: 'wide',   mouth: 'grimace', pupil: 0 },
@@ -218,7 +219,7 @@
     wink:     { browIn: -2,  browOut: -2, eyes: 'wink',   mouth: 'smirk',   pupil: 0, cheeks: true },
   };
   const EXPRESSION_LABELS = {
-    neutral: 'Neutre', joy: 'Joie', surprise: 'Surprise', stress: 'Stress', fear: 'Peur', proud: 'Fierté',
+    neutral: 'Neutre', joy: 'Joie', beam: 'Joie éclatante', surprise: 'Surprise', stress: 'Stress', fear: 'Peur', proud: 'Fierté',
     thinking: 'Réflexion', doubt: 'Doute', sad: 'Tristesse', wink: 'Clin d\'œil',
   };
 
@@ -453,6 +454,62 @@ ${dashes}
 <g transform="translate(80 262) rotate(-8) scale(0.86) translate(0 -300)"><rect x="-37.0" y="260" width="74" height="40" fill="#F3EBDD"/><rect x="-40.0" y="256" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 297 L -34.1 270 A 4.5 4.5 0 0 1 -25.1 270 L -25.1 297 Z" fill="#CDBFA6"/><path d="M -19.3 297 L -19.3 270 A 4.5 4.5 0 0 1 -10.3 270 L -10.3 297 Z" fill="#CDBFA6"/><path d="M -4.5 297 L -4.5 270 A 4.5 4.5 0 0 1 4.5 270 L 4.5 297 Z" fill="#CDBFA6"/><path d="M 10.3 297 L 10.3 270 A 4.5 4.5 0 0 1 19.3 270 L 19.3 297 Z" fill="#CDBFA6"/><path d="M 25.1 297 L 25.1 270 A 4.5 4.5 0 0 1 34.1 270 L 34.1 297 Z" fill="#CDBFA6"/><rect x="-37.0" y="228" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="224" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 253 L -34.1 238 A 4.5 4.5 0 0 1 -25.1 238 L -25.1 253 Z" fill="#CDBFA6"/><path d="M -19.3 253 L -19.3 238 A 4.5 4.5 0 0 1 -10.3 238 L -10.3 253 Z" fill="#CDBFA6"/><path d="M -4.5 253 L -4.5 238 A 4.5 4.5 0 0 1 4.5 238 L 4.5 253 Z" fill="#CDBFA6"/><path d="M 10.3 253 L 10.3 238 A 4.5 4.5 0 0 1 19.3 238 L 19.3 253 Z" fill="#CDBFA6"/><path d="M 25.1 253 L 25.1 238 A 4.5 4.5 0 0 1 34.1 238 L 34.1 253 Z" fill="#CDBFA6"/><rect x="-37.0" y="196" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="192" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 221 L -34.1 206 A 4.5 4.5 0 0 1 -25.1 206 L -25.1 221 Z" fill="#CDBFA6"/><path d="M -19.3 221 L -19.3 206 A 4.5 4.5 0 0 1 -10.3 206 L -10.3 221 Z" fill="#CDBFA6"/><path d="M -4.5 221 L -4.5 206 A 4.5 4.5 0 0 1 4.5 206 L 4.5 221 Z" fill="#CDBFA6"/><path d="M 10.3 221 L 10.3 206 A 4.5 4.5 0 0 1 19.3 206 L 19.3 221 Z" fill="#CDBFA6"/><path d="M 25.1 221 L 25.1 206 A 4.5 4.5 0 0 1 34.1 206 L 34.1 221 Z" fill="#CDBFA6"/><rect x="-37.0" y="164" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="160" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 189 L -34.1 174 A 4.5 4.5 0 0 1 -25.1 174 L -25.1 189 Z" fill="#CDBFA6"/><path d="M -19.3 189 L -19.3 174 A 4.5 4.5 0 0 1 -10.3 174 L -10.3 189 Z" fill="#CDBFA6"/><path d="M -4.5 189 L -4.5 174 A 4.5 4.5 0 0 1 4.5 174 L 4.5 189 Z" fill="#CDBFA6"/><path d="M 10.3 189 L 10.3 174 A 4.5 4.5 0 0 1 19.3 174 L 19.3 189 Z" fill="#CDBFA6"/><path d="M 25.1 189 L 25.1 174 A 4.5 4.5 0 0 1 34.1 174 L 34.1 189 Z" fill="#CDBFA6"/><rect x="-37.0" y="132" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="128" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 157 L -34.1 142 A 4.5 4.5 0 0 1 -25.1 142 L -25.1 157 Z" fill="#CDBFA6"/><path d="M -19.3 157 L -19.3 142 A 4.5 4.5 0 0 1 -10.3 142 L -10.3 157 Z" fill="#CDBFA6"/><path d="M -4.5 157 L -4.5 142 A 4.5 4.5 0 0 1 4.5 142 L 4.5 157 Z" fill="#CDBFA6"/><path d="M 10.3 157 L 10.3 142 A 4.5 4.5 0 0 1 19.3 142 L 19.3 157 Z" fill="#CDBFA6"/><path d="M 25.1 157 L 25.1 142 A 4.5 4.5 0 0 1 34.1 142 L 34.1 157 Z" fill="#CDBFA6"/><rect x="-37.0" y="100" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="96" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 125 L -34.1 110 A 4.5 4.5 0 0 1 -25.1 110 L -25.1 125 Z" fill="#CDBFA6"/><path d="M -19.3 125 L -19.3 110 A 4.5 4.5 0 0 1 -10.3 110 L -10.3 125 Z" fill="#CDBFA6"/><path d="M -4.5 125 L -4.5 110 A 4.5 4.5 0 0 1 4.5 110 L 4.5 125 Z" fill="#CDBFA6"/><path d="M 10.3 125 L 10.3 110 A 4.5 4.5 0 0 1 19.3 110 L 19.3 125 Z" fill="#CDBFA6"/><path d="M 25.1 125 L 25.1 110 A 4.5 4.5 0 0 1 34.1 110 L 34.1 125 Z" fill="#CDBFA6"/><rect x="-37.0" y="68" width="74" height="28" fill="#F3EBDD"/><rect x="-40.0" y="64" width="80" height="5" fill="#E2D6C0"/><path d="M -34.1 93 L -34.1 78 A 4.5 4.5 0 0 1 -25.1 78 L -25.1 93 Z" fill="#CDBFA6"/><path d="M -19.3 93 L -19.3 78 A 4.5 4.5 0 0 1 -10.3 78 L -10.3 93 Z" fill="#CDBFA6"/><path d="M -4.5 93 L -4.5 78 A 4.5 4.5 0 0 1 4.5 78 L 4.5 93 Z" fill="#CDBFA6"/><path d="M 10.3 93 L 10.3 78 A 4.5 4.5 0 0 1 19.3 78 L 19.3 93 Z" fill="#CDBFA6"/><path d="M 25.1 93 L 25.1 78 A 4.5 4.5 0 0 1 34.1 78 L 34.1 93 Z" fill="#CDBFA6"/><rect x="-27.0" y="42" width="54" height="22" fill="#F3EBDD"/><path d="M -24.2 61 L -24.2 50 A 4 4 0 0 1 -16.2 50 L -16.2 61 Z" fill="#CDBFA6"/><path d="M -10.8 61 L -10.8 50 A 4 4 0 0 1 -2.8 50 L -2.8 61 Z" fill="#CDBFA6"/><path d="M 2.8 61 L 2.8 50 A 4 4 0 0 1 10.8 50 L 10.8 61 Z" fill="#CDBFA6"/><path d="M 16.2 61 L 16.2 50 A 4 4 0 0 1 24.2 50 L 24.2 61 Z" fill="#CDBFA6"/><rect x="-30.0" y="38" width="60" height="5" fill="#E2D6C0"/></g>
 <path d="M 176 250 Q 168 200 180 150 Q 192 200 186 250 Z" fill="#3F7A4A"/>
 <path d="M 380 252 Q 372 200 386 160 Q 398 200 392 252 Z" fill="#3F7A4A"/>
+</g>`;
+    }
+    if (c.background === 'church') {
+      // Campagne vallonnée avec, tout au fond à gauche (pour ne pas être cachée par la tête), une église au clocher pointu ;
+      // un chemin y mène, quelques maisons de village à droite.
+      return `<rect width="400" height="400" fill="url(#${id}-sky)"/>
+<g filter="url(#${id}-blur)">
+<circle cx="326" cy="70" r="28" fill="#FFF0B8" opacity="0.9"/>
+<ellipse cx="250" cy="52" rx="34" ry="11" fill="#FFFFFF" opacity="0.7"/><ellipse cx="120" cy="34" rx="26" ry="9" fill="#FFFFFF" opacity="0.6"/>
+<path d="M -20 228 Q 70 176 170 212 Q 270 170 420 214 L 420 270 L -20 270 Z" fill="${tone(0.3)}" opacity="0.5"/>
+<path d="M -20 238 Q 90 214 200 232 Q 310 212 420 234 L 420 400 L -20 400 Z" fill="#9CCB93"/>
+<g fill="#F3EBDD"><rect x="322" y="212" width="22" height="18"/><rect x="350" y="206" width="26" height="24"/><rect x="380" y="214" width="20" height="16"/></g>
+<path d="M 318 213 L 333 201 L 348 213 Z M 346 207 L 363 193 L 380 207 Z M 377 215 L 390 204 L 403 215 Z" fill="#B5604A"/>
+<circle cx="306" cy="218" r="13" fill="#6FAF72"/><circle cx="142" cy="222" r="12" fill="#6FAF72"/>
+<rect x="64" y="194" width="56" height="42" fill="#EFE5D3"/>
+<path d="M 60 196 L 68 176 L 116 176 L 124 196 Z" fill="#66748A"/>
+<path d="M 73 228 V 211 A 4.5 4.5 0 0 1 82 211 V 228 Z M 88 228 V 211 A 4.5 4.5 0 0 1 97 211 V 228 Z M 103 228 V 211 A 4.5 4.5 0 0 1 112 211 V 228 Z" fill="#6F8FB0"/>
+<rect x="36" y="146" width="30" height="90" fill="#F6EEDF"/>
+<rect x="58" y="146" width="8" height="90" fill="#E2D6C0"/>
+<path d="M 31 148 L 51 88 L 71 148 Z" fill="#5E6B7D"/>
+<path d="M 51 68 V 92 M 44 76 H 58" stroke="#4A5263" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 45 178 V 164 A 6 6 0 0 1 57 164 V 178 Z" fill="#8C7B66"/>
+<circle cx="51" cy="194" r="6.5" fill="#FFFFFF" stroke="#8C7B66" stroke-width="2"/>
+<path d="M 44 236 V 218 A 7 7 0 0 1 58 218 V 236 Z" fill="#7A5230"/>
+<path d="M 20 240 Q 12 214 22 190 Q 32 214 26 240 Z" fill="#3F7A4A"/>
+<path d="M -20 262 Q 110 238 230 258 Q 330 244 420 262 L 420 400 L -20 400 Z" fill="#86BD80"/>
+<path d="M 46 236 Q 96 250 70 276 Q 34 320 110 400 L 190 400 Q 88 322 106 280 Q 122 248 58 236 Z" fill="#EADFC8"/>
+</g>`;
+    }
+    if (c.background === 'hospital') {
+      // Hôpital : grand bâtiment blanc à gauche (croix rouge et panneau H), aile basse qui file derrière la tête,
+      // et une carte Vitale stylisée, nette, qui flotte à droite dans le ciel.
+      let win = '';
+      for (let y = 132; y < 262; y += 26) for (let x = 6; x < 110; x += 26) win += `<rect x="${x}" y="${y}" width="16" height="16" rx="2" fill="#7FA8CF"/>`;
+      for (let y = 190; y < 262; y += 26) for (let x = 136; x < 400; x += 26) win += `<rect x="${x}" y="${y}" width="16" height="14" rx="2" fill="#8FB4D6"/>`;
+      return `<rect width="400" height="400" fill="url(#${id}-sky)"/>
+<g filter="url(#${id}-blur)">
+<ellipse cx="170" cy="40" rx="30" ry="10" fill="#FFFFFF" opacity="0.7"/><ellipse cx="276" cy="26" rx="24" ry="8" fill="#FFFFFF" opacity="0.6"/>
+<rect x="122" y="176" width="290" height="110" fill="#E9EDF2"/><rect x="122" y="170" width="290" height="8" fill="#C3CCD8"/>
+<rect x="-10" y="84" width="134" height="200" fill="#F7F9FB"/><rect x="-10" y="78" width="138" height="8" fill="#C3CCD8"/>
+<rect x="116" y="84" width="8" height="200" fill="#DDE3EA"/>
+${win}
+<rect x="24" y="94" width="12" height="28" rx="2" fill="#E0453F"/><rect x="16" y="102" width="28" height="12" rx="2" fill="#E0453F"/>
+<rect x="66" y="92" width="32" height="32" rx="5" fill="#2F6FC4"/><path d="M 76 100 V 116 M 88 100 V 116 M 76 108 H 88" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+<rect x="0" y="276" width="400" height="124" fill="${tone(0.35)}"/>
+<circle cx="140" cy="274" r="14" fill="#6FAF72"/><circle cx="300" cy="276" r="16" fill="#78B77A"/><circle cx="372" cy="272" r="13" fill="#6FAF72"/>
+</g>
+<g transform="translate(342 104) rotate(-10)">
+<rect x="-45" y="-26" width="96" height="60" rx="7" fill="#1F2A44" opacity="0.18"/>
+<clipPath id="${id}-cv"><rect x="-48" y="-30" width="96" height="60" rx="7"/></clipPath>
+<rect x="-48" y="-30" width="96" height="60" rx="7" fill="#43B05C"/>
+<g clip-path="url(#${id}-cv)"><path d="M -48 8 Q -8 -10 48 12 L 48 30 L -48 30 Z" fill="#2F9A4C"/><path d="M -48 3 Q -8 -15 48 7 L 48 13 Q -8 -8 -48 10 Z" fill="#F4D03F"/><path d="M -48 -30 L 48 -30 L 48 -22 Q 0 -30 -48 -18 Z" fill="#FFFFFF" opacity="0.14"/></g>
+<rect x="-39" y="-11" width="17" height="14" rx="3" fill="#E6B94A" stroke="#B88A1E" stroke-width="1"/><path d="M -39 -4 H -22 M -30.5 -11 V 3" stroke="#B88A1E" stroke-width="0.9" fill="none"/>
+<rect x="21" y="-23" width="19" height="24" rx="2.5" fill="#EAF5EC"/><circle cx="30.5" cy="-14" r="4.6" fill="#9DBBA6"/><path d="M 22.5 1 Q 22.5 -7 30.5 -7 Q 38.5 -7 38.5 1 Z" fill="#9DBBA6"/>
+<text x="-40" y="-16" font-family="Inter, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-size="11.5" font-weight="800" font-style="italic" fill="#FFF3A6">Vitale</text>
+<rect x="-40" y="17" width="42" height="3" rx="1.5" fill="#FFFFFF" opacity="0.85"/><rect x="-40" y="23" width="27" height="3" rx="1.5" fill="#FFFFFF" opacity="0.7"/>
 </g>`;
     }
     if (c.background === 'mountains') {
@@ -936,6 +993,14 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     const fill = `url(#${id}-hair)`;
     const part = (d) => `<path d="${d}" stroke="${darken(c.skin, 0.1)}" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>`;
     if (h === 'bald') return `<ellipse cx="184" cy="92" rx="22" ry="10" fill="#fff" opacity="0.3" filter="url(#${id}-soft)"/>`;
+    if (h === 'balding') {
+      // Crâne dégarni : cheveux courts sur les tempes, au-dessus des oreilles, et une petite touffe clairsemée au sommet.
+      const side = 'M 135 153 C 132 130 139 108 155 93 C 160 97 160 103 156 110 C 150 122 148 136 148 152 Q 141 147 135 153 Z';
+      return `<ellipse cx="184" cy="96" rx="22" ry="10" fill="#fff" opacity="0.3" filter="url(#${id}-soft)"/>`
+        + `<path d="${side}" fill="${fill}"/><path d="${side}" fill="${fill}" transform="translate(400 0) scale(-1 1)"/>`
+        + `<path d="M 187 84 C 190 75 210 75 213 84 C 207 80 193 80 187 84 Z" fill="${fill}"/>`
+        + `<path d="M 193 79 q -3 -7 1 -11 M 200 78 q -1 -8 3 -12 M 207 79 q 2 -7 6 -9" stroke="${c.hairColor}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    }
     if (h === 'buzz') return `<path d="${SKULLCAP}" fill="${fill}" opacity="0.9"/>`;
     if (h === 'afro') return `<path d="M 140 142 C 141 96 164 76 200 76 C 236 76 259 96 260 142 C 254 112 232 100 200 100 C 168 100 146 112 140 142 Z" fill="${fill}"/>`;
     if (h === 'wavy') {
@@ -1004,6 +1069,16 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
         + `<path d="M 170 110 C 163 84 171 56 195 44 C 214 35 238 39 251 54 C 243 52 235 54 231 60 C 241 67 245 82 241 108 Q 206 97 170 110 Z" fill="${fill}" stroke="${line}" stroke-width="1.6" stroke-linejoin="round"/>`
         + `<path d="M 184 104 C 179 80 187 60 204 50 M 203 100 C 200 78 208 60 225 49 M 223 101 C 225 86 228 74 233 67" stroke="${line}" stroke-width="1.8" fill="none" opacity="0.45" stroke-linecap="round"/>`
         + `<path d="M 190 96 C 188 78 196 60 212 51" stroke="${lighten(c.hairColor, 0.4)}" stroke-width="3" fill="none" opacity="0.4" stroke-linecap="round"/>`;
+    }
+    if (h === 'sidequiff') {
+      // Variante de la mèche relevée : même raie à gauche, mais la mèche prend tout le côté vers lequel
+      // elle part, du bord de la raie jusqu'à la tempe droite, au lieu de rester au milieu du crâne.
+      const line = darken(c.hairColor, 0.3);
+      return `<path d="M 138 150 C 132 96 156 62 190 58 C 226 54 262 72 266 112 C 267 130 265 142 262 150 C 260 126 252 112 240 106 C 222 98 198 98 180 102 C 162 108 148 122 140 142 Z" fill="${fill}"/>`
+        + `${part('M 166 66 Q 163 86 166 106')}`
+        + `<path d="M 168 110 C 160 84 168 54 192 42 C 214 31 248 36 263 58 C 275 76 275 104 268 122 C 267 134 265 142 262 150 C 260 126 252 112 240 106 C 222 98 198 98 180 102 Q 173 105 168 110 Z" fill="${fill}" stroke="${line}" stroke-width="1.6" stroke-linejoin="round"/>`
+        + `<path d="M 184 104 C 178 80 186 58 206 48 M 204 100 C 200 76 214 58 238 51 M 226 101 C 226 82 238 68 257 65 M 246 108 C 248 95 256 86 268 85" stroke="${line}" stroke-width="1.8" fill="none" opacity="0.45" stroke-linecap="round"/>`
+        + `<path d="M 191 96 C 188 76 198 58 220 49" stroke="${lighten(c.hairColor, 0.4)}" stroke-width="3" fill="none" opacity="0.4" stroke-linecap="round"/>`;
     }
     if (h === 'sidepart') {
       return `<path d="${CASQUE}" fill="${fill}"/><path d="M 182 58 C 210 44 250 50 266 92 C 262 78 250 68 236 66 C 220 64 206 72 190 72 Z" fill="${fill}"/>${part('M 176 62 Q 180 88 186 108')}`;
@@ -1085,6 +1160,11 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
     const rim = lipstick ? ` stroke="${lipstick}" stroke-width="3" stroke-linejoin="round"` : '';
     switch (ex.mouth) {
       case 'grin': return `<path d="M 181 188 Q 200 217 219 188 Q 200 194 181 188 Z" fill="#5A2A2E"${rim}/><path d="M 185 189.5 Q 200 196 215 189.5 L 214 193 Q 200 199.5 186 193 Z" fill="#FFFFFF"/>`;
+      // Sourire « Colgate » : croissant ouvert de la largeur du sourire habituel, deux rangées de dents bien blanches.
+      case 'beam': return `<path d="M 180.8 186.4 Q 200 192.8 219.2 186.4 C 218.4 200 209.6 208 200 208 C 190.4 208 181.6 200 180.8 186.4 Z" fill="#5A2A2E"${rim}/>`
+        + `<path d="M 183.2 188.3 Q 200 194.4 216.8 188.3 C 215.6 198.4 208.4 205.6 200 205.6 C 191.6 205.6 184.4 198.4 183.2 188.3 Z" fill="#FFFFFF"/>`
+        + `<path d="M 184.8 196.4 Q 200 201.6 215.2 196.4" stroke="#C3CAD6" stroke-width="1" fill="none" stroke-linecap="round"/>`
+        + `<path d="M 200 193.3 V 198.9 M 194 192.5 V 198.2 M 206 192.5 V 198.2 M 188.4 190.9 V 197.3 M 211.6 190.9 V 197.3" stroke="#D3D9E3" stroke-width="0.8" stroke-linecap="round"/>`;
       case 'o': return `<ellipse cx="200" cy="196" rx="7" ry="9.5" fill="#5A2A2E"${rim}/><ellipse cx="200" cy="191.5" rx="4.5" ry="2.5" fill="#FFFFFF" opacity="0.9"/>`;
       case 'flat': return `<path d="M 190 194 L 210 194" ${stroke}/>`;
       case 'wavy': return `<path d="M 186 195 Q 193 188 200 195 Q 207 202 214 195" ${stroke}/>`;
@@ -1235,6 +1315,18 @@ ${stars}<circle cx="318" cy="78" r="30" fill="#FFF6D6"/><circle cx="332" cy="68"
       case 'headphones': {
         const pad = shade(hc, '#2E3440', '#5C6370', 0.3, true);
         return `<path d="M 134 152 C 134 66 266 66 266 152" stroke="${hc}" stroke-width="10" fill="none" stroke-linecap="round"/><rect x="122" y="138" width="26" height="40" rx="11" fill="${hc}"/><rect x="252" y="138" width="26" height="40" rx="11" fill="${hc}"/><rect x="128" y="146" width="10" height="24" rx="5" fill="${pad}"/><rect x="262" y="146" width="10" height="24" rx="5" fill="${pad}"/>`;
+      }
+      case 'earpiece': {
+        // Oreillette portée sur une seule oreille (à droite de l'image) : contour d'oreille, boîtier avec voyant
+        // et petite perche micro qui descend vers la bouche. Elle suit la position de l'oreille selon la forme du visage.
+        const ex = 200 + earOffset(c);
+        const pad = shade(hc, '#2E3440', '#5C6370', 0.3, true);
+        return `<path d="M ${ex - 5} 152 C ${ex - 4} 138 ${ex + 13} 138 ${ex + 12} 154 Q ${ex + 12} 164 ${ex + 8} 170" stroke="${hc}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`
+          + `<path d="M ${ex - 1} 172 Q ${ex - 6} 192 ${ex - 23} 195" stroke="${hc}" stroke-width="4" fill="none" stroke-linecap="round"/>`
+          + `<ellipse cx="${ex - 25}" cy="195" rx="5.5" ry="4" fill="${darken(hc, 0.25)}"/>`
+          + `<rect x="${ex - 6}" y="149" width="14" height="27" rx="7" fill="${hc}"/>`
+          + `<rect x="${ex - 3}" y="153" width="6" height="15" rx="3" fill="${pad}"/>`
+          + `<circle cx="${ex + 1}" cy="171.5" r="1.8" fill="#7FE0FF"/>`;
       }
       case 'beanie':
         return `<path d="M 136 120 C 136 58 264 58 264 120 L 264 126 L 136 126 Z" fill="${hc}"/><path d="M 150 72 Q 200 56 250 72" stroke="#fff" stroke-width="5" fill="none" opacity="0.15" stroke-linecap="round"/><rect x="132" y="104" width="136" height="24" rx="11" fill="${darken(hc, 0.15)}"/><path d="M 146 108 L 146 124 M 160 106 L 160 126 M 174 105 L 174 127 M 188 104 L 188 128 M 212 104 L 212 128 M 226 105 L 226 127 M 240 106 L 240 126 M 254 108 L 254 124" stroke="${darken(hc, 0.3)}" stroke-width="1.5" opacity="0.5"/><circle cx="200" cy="58" r="12" fill="${lighten(hc, 0.3)}"/>`;

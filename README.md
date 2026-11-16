@@ -117,8 +117,9 @@ Serveur cible : `PROD_HOST` (défaut `srv03`), `PROD_DIR` (défaut `/production/
 
 L'app expose un **serveur MCP distant** sur `/mcp` (transport « Streamable HTTP », fichier
 `src/routes/mcp.js`). On l'ajoute dans Claude comme **connecteur par URL** — rien à installer
-côté client. Il permet de consulter collaborateurs, résultats et groupes (**lecture seule**) et
-de piloter la présentation du live (`start` / `next` / `prev` / `stop`).
+côté client. Il permet de consulter collaborateurs, résultats et groupes, de piloter la
+présentation du live (`start` / `next` / `prev` / `stop`) et de générer des liens d'invitation
+(pour tous les collaborateurs ou pour une liste d'ids ; jamais pour un compte admin).
 
 ```bash
 # Activer côté serveur : générer un jeton et relancer
@@ -142,8 +143,8 @@ curl -s -H 'Accept: application/json, text/event-stream' -H 'Content-Type: appli
   'https://seminaire.kleekr.com/mcp?key=LE_JETON'
 ```
 
-Outils exposés : `list_collaborators`, `get_result`, `compare_collaborators`, `live_snapshot`,
-`presentation_state`, `presentation_control`.
+Outils exposés : `list_collaborators`, `create_invite_links`, `get_result`, `compare_collaborators`,
+`live_snapshot`, `presentation_state`, `presentation_control`.
 
 ## Structure
 

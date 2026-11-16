@@ -168,6 +168,32 @@
 
   /* ----------  Diapositives  ---------- */
   const VIEWS = {
+    /* Couverture : seule diapositive faite pour rester longtemps à l'écran, d'où les halos et la vague qui bougent sans fin. */
+    cover: (s) => `<div class="dk-glows" aria-hidden="true">${[
+        ['#BFE1FF', 16, 26, 34, 3, 4, 17], ['#E4E2FF', 84, 20, 30, -4, 5, 21], ['#FFE9B8', 78, 82, 32, -3, -4, 19], ['#D6F3E2', 20, 84, 28, 4, -3, 23],
+      ].map(([c, x, y, size, dx, dy, t], i) => `<i style="--c:${c};--x:${x}cqw;--y:${y}cqh;--s:${size}cqw;--dx:${dx}cqw;--dy:${dy}cqh;--t:${t}s;--d:${i * 180}ms"></i>`).join('')}</div>
+      <div class="dk-center is-mid is-cover">
+        ${eyebrow(s.eyebrow, 200)}
+        ${title(s.title, 420, 'is-cover')}
+        <ul class="dk-points">${s.chips.map((c, i) => `<li class="dk-in" style="--d:${1300 + i * 220}ms">${esc(c)}</li>`).join('')}</ul>
+      </div>
+      <div class="dk-center is-foot is-wait dk-in" style="--d:2200ms">
+        ${wave()}
+        <p class="dk-wait">${esc(s.wait)}</p>
+      </div>`,
+
+    programme: (s) => {
+      let n = 0;
+      return `<div class="dk-center is-top is-prog">
+        ${eyebrow(s.eyebrow)}
+        ${title(s.title, 120, 'is-small')}
+      </div>
+      <div class="dk-prog">${s.parts.map((part, p) => `<section class="dk-prog-part dk-in" style="--d:${700 + p * 260}ms">
+          <header><b>${esc(part.label)}</b>${part.note ? `<span>${esc(part.note)}</span>` : ''}</header>
+          <ol>${part.items.map((it) => `<li class="dk-in${it.now ? ' is-now' : ''}" style="--d:${1000 + (n++) * 130}ms"><time>${esc(it.time)}</time><div><b>${esc(it.title)}</b><span>${esc(it.text)}</span></div>${it.now ? `<em>${esc(it.now)}</em>` : ''}</li>`).join('')}</ol>
+        </section>`).join('')}</div>`;
+    },
+
     hello: (s) => `<div class="dk-center is-top">
         ${eyebrow(s.eyebrow)}
         <h1 class="dk-hero dk-in" style="--d:120ms">${esc(greeting())} l'équipe</h1>
@@ -182,17 +208,25 @@
       </div>
       ${gallery(1800, s.empty)}`,
 
+    intro: (s) => `<div class="dk-center is-top is-tight">
+        ${eyebrow(s.eyebrow)}
+        ${title(s.title, 120, 'is-small')}
+        ${read(s.say, 900, 'is-small')}
+      </div>
+      <p class="dk-lead dk-in" style="--d:2500ms">${esc(s.lead)}</p>
+      <ol class="dk-cards">${s.cards.map((c, i) => `<li class="dk-in" style="--d:${2900 + i * 700}ms"><i>${i + 1}</i><b>${esc(c.title)}</b><span>${esc(c.text)}</span></li>`).join('')}</ol>`,
+
     scene: (s) => `<div class="dk-center is-top is-tight">
         ${eyebrow(s.eyebrow)}
         ${read(s.say, 200, 'is-big is-wide')}
       </div>
-      ${ORDER.map((d, i) => `<div class="dk-bubble" style="--x:${s.blobs[d].x}cqw;--c:${dims[d].color};--d:${1900 + i * 1700}ms">${esc(s.lines[d])}</div>`).join('')}`,
+      ${ORDER.map((d, i) => `<div class="dk-bubble" style="--x:${s.blobs[d].x}cqw;--c:${dims[d].color};--d:${1900 + i * 1700}ms">${esc(s.lines[d])}</div>${s.tags ? `<span class="dk-nick dk-in" style="--x:${s.blobs[d].x}cqw;--c:${dims[d].color};--d:${2500 + i * 1700}ms">${esc(s.tags[d])}</span>` : ''}`).join('')}`,
 
     statement: (s) => `<div class="dk-center is-mid">
         ${eyebrow(s.eyebrow)}
         ${title(s.title, 120)}
         ${read(s.say, 900)}
-        <p class="dk-note dk-in" style="--d:3600ms">${esc(s.note)}</p>
+        ${s.note ? `<p class="dk-note dk-in" style="--d:3600ms">${esc(s.note)}</p>` : ''}
       </div>`,
 
     axes: (s) => `<div class="dk-left is-axes">
