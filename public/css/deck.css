@@ -230,8 +230,9 @@
 .dk-prog-part header { display: flex; align-items: center; justify-content: space-between; gap: 1cqw; margin-bottom: .7cqw; }
 .dk-prog-part header b { font-size: 1.2cqw; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--soft); }
 .dk-prog-part header span { padding: .2cqw .9cqw; border-radius: 99px; background: #F3E9C9; color: #7A5C00; font-size: 1.15cqw; font-weight: 700; white-space: nowrap; }
-/* Les deux cartes ont la même hauteur : les rendez-vous de la soirée, moins nombreux, se répartissent sur toute la carte. */
-.dk-prog-part ol { flex: 1; display: grid; grid-auto-rows: 1fr; gap: .3cqw; margin: 0; padding: 0; list-style: none; }
+/* Les deux cartes ont la même hauteur et le même nombre de lignes (--rows, celui de la plus longue) :
+   les rendez-vous de la soirée gardent ainsi l'espacement de la journée, le vide reste en bas de la carte. */
+.dk-prog-part ol { flex: 1; display: grid; grid-template-rows: repeat(var(--rows), 1fr); gap: .3cqw; margin: 0; padding: 0; list-style: none; }
 .dk-prog-part li { display: flex; align-items: center; gap: 1.2cqw; padding: .62cqw .9cqw; border-radius: 1.2cqw; }
 .dk-prog-part time { flex: none; width: 6.6cqw; padding: .3cqw 0; border-radius: 99px; background: #EEF0F4; font-size: 1.5cqw; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
 .dk-prog-part li div { flex: 1; min-width: 0; }
@@ -251,8 +252,7 @@
 .dk-center.is-cover .dk-points { margin-top: 3.6cqh; }
 .dk-center.is-cover .dk-points li { padding: .7cqw 1.6cqw; font-size: 2cqw; }
 .dk-center.is-wait { bottom: 11cqh; }
-.dk-center.is-wait .dk-wave { margin-top: 0; }
-.dk-wait { margin: 1.6cqh 0 0; font-size: 1.9cqw; font-weight: 600; color: #5F626C; }
+.dk-wait { margin: 0; font-size: 1.9cqw; font-weight: 600; color: #5F626C; }
 @media (prefers-reduced-motion: reduce) { .dk-glows i { animation: none; } }
 
 /* Le DISC, c'est quoi ? : trois cartes, une par usage */

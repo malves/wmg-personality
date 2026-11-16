@@ -168,7 +168,7 @@
 
   /* ----------  Diapositives  ---------- */
   const VIEWS = {
-    /* Couverture : seule diapositive faite pour rester longtemps à l'écran, d'où les halos et la vague qui bougent sans fin. */
+    /* Couverture : seule diapositive faite pour rester longtemps à l'écran, d'où les halos qui bougent sans fin. */
     cover: (s) => `<div class="dk-glows" aria-hidden="true">${[
         ['#BFE1FF', 16, 26, 34, 3, 4, 17], ['#E4E2FF', 84, 20, 30, -4, 5, 21], ['#FFE9B8', 78, 82, 32, -3, -4, 19], ['#D6F3E2', 20, 84, 28, 4, -3, 23],
       ].map(([c, x, y, size, dx, dy, t], i) => `<i style="--c:${c};--x:${x}cqw;--y:${y}cqh;--s:${size}cqw;--dx:${dx}cqw;--dy:${dy}cqh;--t:${t}s;--d:${i * 180}ms"></i>`).join('')}</div>
@@ -178,7 +178,6 @@
         <ul class="dk-points">${s.chips.map((c, i) => `<li class="dk-in" style="--d:${1300 + i * 220}ms">${esc(c)}</li>`).join('')}</ul>
       </div>
       <div class="dk-center is-foot is-wait dk-in" style="--d:2200ms">
-        ${wave()}
         <p class="dk-wait">${esc(s.wait)}</p>
       </div>`,
 
@@ -188,7 +187,7 @@
         ${eyebrow(s.eyebrow)}
         ${title(s.title, 120, 'is-small')}
       </div>
-      <div class="dk-prog">${s.parts.map((part, p) => `<section class="dk-prog-part dk-in" style="--d:${700 + p * 260}ms">
+      <div class="dk-prog" style="--rows:${Math.max(...s.parts.map((part) => part.items.length))}">${s.parts.map((part, p) => `<section class="dk-prog-part dk-in" style="--d:${700 + p * 260}ms">
           <header><b>${esc(part.label)}</b>${part.note ? `<span>${esc(part.note)}</span>` : ''}</header>
           <ol>${part.items.map((it) => `<li class="dk-in${it.now ? ' is-now' : ''}" style="--d:${1000 + (n++) * 130}ms"><time>${esc(it.time)}</time><div><b>${esc(it.title)}</b><span>${esc(it.text)}</span></div>${it.now ? `<em>${esc(it.now)}</em>` : ''}</li>`).join('')}</ol>
         </section>`).join('')}</div>`;

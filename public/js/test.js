@@ -79,25 +79,13 @@
     const e1 = emotionByKey('joie');
     const e2 = emotionByKey('curiosite');
     render(`
-      <h2 class="screen-title">Analyse en cours…</h2>
+      <h2 class="screen-title">Ton test de personnalité</h2>
       ${peek(e1, e2)}
       ${viewfinder('neutral', null)}
-      <p class="intro-text"><b>Je scanne ton profil…</b> enfin presque. Tu vas voir ${n} séries de 4 mots : choisis celui qui te ressemble <b>le plus</b> et celui qui te ressemble <b>le moins</b>. Prêt&nbsp;?</p>
-      ${wave()}
+      <p class="intro-text">Tu vas voir <b>${n} séries de 4 mots</b>. Dans chacune, choisis le mot qui te ressemble <b>le plus</b> et celui qui te ressemble <b>le moins</b>.</p>
       <div class="test-footer">
-        <a class="link-btn" href="/">Plus tard</a>
-        <div class="pill rec"><i></i><span id="rec-time">00:00</span></div>
-        <button class="link-btn" id="go" style="color:#1C1D22">C'est parti</button>
+        <button class="btn btn-primary btn-block" id="go">Démarrer</button>
       </div>`);
-    let sec = 0;
-    const tick = () => {
-      sec += 1;
-      const el = document.getElementById('rec-time');
-      if (!el) return;
-      el.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
-      later(tick, 1000);
-    };
-    later(tick, 1000);
     const faces = ['neutral', 'thinking', 'joy', 'surprise', 'wink'];
     let f = 0;
     const cycle = () => { f = (f + 1) % faces.length; setExpression(faces[f]); later(cycle, 2200); };

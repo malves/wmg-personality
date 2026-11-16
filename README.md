@@ -163,7 +163,6 @@ src/seed/                 questions, profils, conseils, texte de consentement
 public/js/avatar.js       rendu SVG des avatars (schéma du builder, 26 réglages) et blobs, partagé serveur/navigateur
 public/js/test.js         déroulé du test côté client
 public/js/builder.js      builder d'avatar (admin), onglets générés depuis le schéma
-public/js/result-export.js  export PNG du résultat
 public/js/deck-slides.js  présentation : textes, déplacements (partagé serveur/navigateur)
 public/js/deck.js         présentation : scène et animations, par-dessus la carte
 public/css/               styles app (mobile), admin (desktop) et présentation (deck.css)

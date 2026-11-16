@@ -1,11 +1,6 @@
 <%
 const cfg = parseAvatar(user.avatar_json);
 const kw = keywords(profile.keywords);
-const exportData = {
-  firstName: user.first_name, profileName: profile.name, tagline: profile.tagline, color, expression,
-  avatar: cfg, scores: scores.norm, dims, keywords: kw, appName,
-  dimensions: ORDER.reduce((o, d) => { o[d] = { name: DIMENSIONS[d].name, color: DIMENSIONS[d].color, chart: DIMENSIONS[d].chart, face: DIMENSIONS[d].face }; return o; }, {}),
-};
 const lead = DIMENSIONS[dims[0]];
 const second = DIMENSIONS[dims[1]];
 const balanced = attempt.profile_key === 'EQ';
@@ -92,7 +87,6 @@ const doneOn = formatDate(attempt.completed_at);
 
     <div class="rs-actions rv">
       <% if (isSelf) { %>
-        <button class="btn btn-secondary" id="download" type="button">Télécharger</button>
         <a class="btn btn-primary" href="/team">Voir l'équipe</a>
       <% } else { %>
         <a class="btn btn-secondary" href="/team">Retour</a>
@@ -103,7 +97,3 @@ const doneOn = formatDate(attempt.completed_at);
   </div>
 </section>
 <script src="/js/result.js?v=<%= assetVersion %>"></script>
-<% if (isSelf) { %>
-<script type="application/json" id="result-data"><%- json(exportData) %></script>
-<script src="/js/result-export.js?v=<%= assetVersion %>"></script>
-<% } %>
